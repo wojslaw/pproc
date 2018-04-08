@@ -1,12 +1,16 @@
 /* TODO:
 Rozne sposoby wyswietlania danych: hex, dec, znak
-Operacje
+Wincej operacji
+Flagi
+Upewnic sie, ze logical_shift jest zawsze prawidlowy(zero padding)
 */
 
-#include <stdio.h>
-#include <stdint.h>
+#include <cstdio>
+#include <cstdint>
 
 #include <string>
+#include <iostream>
+#include <bitset>
 
 #include "Instructions.h"
 #include "VirtualMachine.h"
@@ -20,15 +24,37 @@ int main()
 
 //	vm.setRegisterByName('a', 0x0f);
 //	vm.setRegisterByName('b', 0x07);
-	przejproc::load_a_with_value(&vm, 0xff);
-	vm.printRegisters();
-	vm.printMemory(0x00, 0x00, 4);
+	const uint8_t val_a = 0x0a;
+	przejproc::load_a_with_value(&vm, 0xbb);
+	przejproc::transfer_a_to_register(&vm, 'b');
+	przejproc::load_a_with_value(&vm, 0x07);
 
+
+	przejproc::load_a_with_value(&vm, val_a);
+	przejproc::and_bitwise(&vm);
+	przejproc::increment_register(&vm, 'y');
 	przejproc::save_a_to_memory(&vm);
-	
+
+
+	przejproc::load_a_with_value(&vm, val_a);
+	przejproc::not_bitwise(&vm);
+	przejproc::increment_register(&vm, 'y');
+	przejproc::save_a_to_memory(&vm);
+
+
+	przejproc::load_a_with_value(&vm, val_a);
+	przejproc::or_bitwise(&vm);
+	przejproc::increment_register(&vm, 'y');
+	przejproc::save_a_to_memory(&vm);
+
+
+
+	przejproc::load_a_with_value(&vm, 0xbb);
+	przejproc::transfer_a_to_register(&vm, 'b');
+	przejproc::load_a_with_value(&vm, 0x07);
 	printf("\n\nAfter operations :");
 	vm.printRegisters();
-	vm.printMemory(0x00, 0x00, 4);
+	vm.printMemory(0x00, 0x00, 6);
 
 
 	printf("\n\n");

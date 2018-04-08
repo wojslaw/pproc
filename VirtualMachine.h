@@ -1,12 +1,17 @@
 #pragma once
 
-#include <stdint.h>
-#include <stdio.h>
+#include <cstdint>
+#include <cstdio>
 
 #include <map>
 using std::map;
 #include <string>
 using std::string;
+#include <iostream>
+using std::cout;
+#include <bitset>
+using std::bitset;
+
 
 const std::string REGISTER_NAMES_STRING = "abfsxypc";
 

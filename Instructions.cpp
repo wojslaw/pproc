@@ -85,23 +85,37 @@ void przejproc::xor_bitwise (class VirtualMachine *vm)
 {
 	uint8_t reg_a = vm->getRegisterByName('a');
 	uint8_t reg_b = vm->getRegisterByName('b');
-	reg_a = reg_a xor reg_b;
+	reg_a = reg_a ^ reg_b;
 
 	vm->setRegisterByName('a', reg_a);
 }
-/*
 void przejproc::or_bitwise (class VirtualMachine *vm)
 {
+	uint8_t reg_a = vm->getRegisterByName('a');
+	uint8_t reg_b = vm->getRegisterByName('b');
+	reg_a = reg_a | reg_b;
 
+	vm->setRegisterByName('a', reg_a);
 }
 void przejproc::and_bitwise (class VirtualMachine *vm)
 {
+	uint8_t reg_a = vm->getRegisterByName('a');
+	uint8_t reg_b = vm->getRegisterByName('b');
+	reg_a = reg_a & reg_b;
 
+	vm->setRegisterByName('a', reg_a);
 }
 void przejproc::not_bitwise (class VirtualMachine *vm)
 {
+	uint8_t reg_a = vm->getRegisterByName('a');
+	uint8_t reg_b = vm->getRegisterByName('b');
+	reg_a = ~reg_b;
 
+	vm->setRegisterByName('a', reg_a);
+	
 }
+
+/*
 void przejproc::rotate_left (class VirtualMachine *vm)
 {
 
@@ -110,11 +124,15 @@ void przejproc::rotate_right (class VirtualMachineState *vm)
 {
 
 }
-void przejproc::arithmetic_shift_left (class VirtualMachine *vm)
+// */
+void przejproc::logical_shift_left (class VirtualMachine *vm)
 {
+	uint8_t reg_a = vm->getRegisterByName('a');
+	reg_a = reg_a << 1;
 
-}*/
-void przejproc::arithmetic_shift_right (class VirtualMachine *vm)
+	vm->setRegisterByName('a', reg_a);
+}
+void przejproc::logical_shift_right (class VirtualMachine *vm)
 {
 	uint8_t reg_a = vm->getRegisterByName('a');
 	reg_a = reg_a >> 1;
@@ -160,7 +178,8 @@ void przejproc::transfer_a_to_register (
 		class VirtualMachine * vm, 
 		char register_name )
 {
-
+	uint8_t reg_a = vm->getRegisterByName('a');
+	vm->setRegisterByName(register_name, reg_a);
 }
 
 
@@ -168,6 +187,7 @@ void przejproc::transfer_register_to_a (
 		class VirtualMachine * vm, 
 		char register_name )
 {
-
+	uint8_t regval = vm->getRegisterByName(register_name);
+	vm->setRegisterByName('a', regval);
 }
 // }

@@ -11,6 +11,7 @@ VirtualMachineState::VirtualMachineState()
 
 }
 
+
 VirtualMachineState::~VirtualMachineState()
 {
 	// dtor
@@ -21,9 +22,12 @@ void VirtualMachine::printRegisters(void)
 {	
 	printf("\nRegisters:");
 	for(char regname : REGISTER_NAMES_STRING) {
-		printf("\n %c = $%02x", regname, state.register_map.at(regname));
+		uint8_t value = state.register_map.at(regname);
+		printf("\n %c = $%02x    b_", regname, value);
+		cout << bitset<8>(value); 
 	}
 }
+
 
 void VirtualMachine::printMemory(
 		uint8_t page ,
@@ -32,7 +36,9 @@ void VirtualMachine::printMemory(
 ) {
 	for(uint8_t i = 0; i < cellcount; i++) {
 		uint8_t curcell = start_cell+i;
-		printf("\n @$%02x%02x: $%02x", page, curcell, *accessMemoryAt(page, curcell) );
+		uint8_t value = *accessMemoryAt(page, curcell);
+		printf("\n @$%02x%02x: $%02x   b_", page, curcell, value );
+		cout << bitset<8>(value);
 	}
 }
 

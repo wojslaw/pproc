@@ -21,8 +21,8 @@ namespace przejproc {
 	void not_bitwise (class VirtualMachine*);
 	void rotate_left (class VirtualMachine*);
 	void rotate_right (class VirtualMachineState *);
-	void arithmetic_shift_left (class VirtualMachine*);
-	void arithmetic_shift_right (class VirtualMachine*);
+	void logical_shift_left (class VirtualMachine*);
+	void logical_shift_right (class VirtualMachine*);
 
 
 // Loading registers
@@ -48,9 +48,13 @@ namespace przejproc {
 	void push_register(class VirtualMachine*, char register_name);
 	void pop_register(class VirtualMachine*, char register_name);
 
+// Conditions
+	void is_zero (class VirtualMachine);
+
 // Jumps
 	void jump_uncoditional (class VirtualMachine *);
-	
+	void jump_if(class VirtualMachine *);
+	void jump_if_not(class VirtualMachine *);
 
 
 
