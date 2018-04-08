@@ -14,36 +14,21 @@ Operacje
 
 
 
-
-
-
-/* Procedures for processor will be: */
-Operation proc_increment_a;
-
-
 int main()
 {
 	VirtualMachine vm = VirtualMachine();
+
+//	vm.setRegisterByName('a', 0x0f);
+//	vm.setRegisterByName('b', 0x07);
+	przejproc::load_a_with_value(&vm, 0xff);
 	vm.printRegisters();
-	vm.printMemory(0x01, 0x00, 4);
+	vm.printMemory(0x00, 0x00, 4);
 
-	vm.set_registerByName('a', 0x08);
-	przejproc::push_register(&vm, 'a');
-
+	przejproc::save_a_to_memory(&vm);
+	
+	printf("\n\nAfter operations :");
 	vm.printRegisters();
-	vm.printMemory(0x01, 0x00, 4);
-
-/* 	struct VirtualMachineState main_proc;
-	struct CpuRegisters registers;
-	int8_t memory[0xffff];
-
-	print_registers(&registers);
-	registers.reg_a = 126;
-	printf("\n\nAfter:");
-
-	print_registers(&registers);
-	print_memory(&memory[0], 9); */
-
+	vm.printMemory(0x00, 0x00, 4);
 
 
 	printf("\n\n");

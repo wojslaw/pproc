@@ -39,13 +39,29 @@ void VirtualMachine::printMemory(
 
 uint8_t* VirtualMachine::accessMemoryAt (
 		uint8_t page ,
-		uint8_t cell
-) {
+		uint8_t cell )
+{
 	return &(state.mem[page][cell]);
 }
 
 
-void VirtualMachine::set_registerByName(char regnam, uint8_t value)
+uint8_t* VirtualMachine::accessMemoryByXY (void) 
+{
+	uint8_t page = getRegisterByName('x');
+	uint8_t cell = getRegisterByName('y');
+	return accessMemoryAt(page, cell);
+}
+
+
+uint8_t* VirtualMachine::accessMemoryByPC(void)
+{
+	uint8_t page = getRegisterByName('p');
+	uint8_t cell = getRegisterByName('c');
+	return accessMemoryAt(page, cell);
+}
+
+
+void VirtualMachine::setRegisterByName(char regnam, uint8_t value)
 {
 	state.register_map.at(regnam) = value;
 }

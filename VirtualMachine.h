@@ -76,8 +76,7 @@ public:
 
 
 
-	uint8_t* accessRegisterByName(char regname);
-	void set_registerByName(char, uint8_t);
+	void setRegisterByName(char, uint8_t);
 	uint8_t getRegisterByName(char);
 
 	uint8_t* accessMemoryAt ( uint8_t page, uint8_t cell );
