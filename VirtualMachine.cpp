@@ -4,11 +4,15 @@ VirtualMachineState::VirtualMachineState()
 {
 	uint8_t initial_register_value = 0;
 	std::string register_names = REGISTER_NAMES_STRING;
+	std::string internal_register_names = INTERNAL_REGISTER_NAMES_STRING;
 
 	for(char regnam : register_names) {
 		register_map[regnam] = initial_register_value;
 	}
-
+	
+	for(char intregnam : internal_register_names) {
+		internal_register_map[intregnam] = initial_register_value;
+	}
 }
 
 
@@ -17,6 +21,14 @@ VirtualMachineState::~VirtualMachineState()
 	// dtor
 }
 
+void doMachineCycle(void)
+{
+	state.loadCurrentInstruction();
+	state.incrementPC();
+	state.loadCurrentOperand();
+	state.incrementPC();
+	evaluateOperation();
+}
 
 void VirtualMachine::printRegisters(void)
 {	

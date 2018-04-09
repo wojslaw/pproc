@@ -14,32 +14,29 @@ using std::bitset;
 
 
 const std::string REGISTER_NAMES_STRING = "abfsxypc";
+const std::string INTERNAL_REGISTER_NAMES_STRING = "io";
+
 
 const uint16_t CPU_MEMORY_PAGES = 0xff;
 const uint16_t CPU_MEMORY_CELLS_ON_PAGE = 0xff;
-struct CpuRegisters {
-	uint8_t reg_a;
-	uint8_t reg_b;
 
-	uint8_t reg_f;
-	uint8_t reg_s;
-
-	uint8_t reg_x;
-	uint8_t reg_y;
-
-	uint8_t reg_p;
-	uint8_t reg_c;
-};
 
 struct VirtualMachineState {
-	struct CpuRegisters regs;
 	uint8_t mem[CPU_MEMORY_PAGES][CPU_MEMORY_CELLS_ON_PAGE];
 
-
+	map<char, uint8_t> internal_register_map;
 	map<char, uint8_t> register_map;
 
-// methods
+// methods - things for operating on the state
+	void loadCurrentInstruction();
+	void loadCurrentOperand();
+	void setRegisterByName(char, uint8_t);
+	uint8_t getRegisterByName(char);
 
+	uint8_t* accessMemoryAt ( uint8_t page, uint8_t cell );
+	uint8_t* accessMemoryByXY(void);
+	uint8_t* accessMemoryByPC(void);
+	
 	VirtualMachineState();
 	~VirtualMachineState();
 };
@@ -57,6 +54,7 @@ struct Instruction {
 	OperationPtr operation;
 };
 
+
 struct ISA {
 	Instruction instruction[0xff];
 };
@@ -70,8 +68,10 @@ private:
 	struct ISA instruction_set;
 
 public:
-	void printRegisters(void);
+	void evaluateOperation(void);
+	void doMachineCycle(void);
 
+	void printRegisters(void);
 	void printMemory(
 			uint8_t page ,
 			uint8_t start_cell ,
