@@ -21,17 +21,100 @@ VirtualMachineState::~VirtualMachineState()
 	// dtor
 }
 
-void doMachineCycle(void)
+uint8_t* VirtualMachineState::accessMemoryAt (
+		uint8_t page ,
+		uint8_t cell )
 {
-	state.loadCurrentInstruction();
-	state.incrementPC();
-	state.loadCurrentOperand();
-	state.incrementPC();
-	evaluateOperation();
+	return &(mem[page][cell]);
 }
 
+
+uint8_t* VirtualMachineState::accessMemoryByXY (void) 
+{
+	uint8_t page = getRegisterByName('x');
+	uint8_t cell = getRegisterByName('y');
+	return accessMemoryAt(page, cell);
+}
+
+
+uint8_t* VirtualMachineState::accessMemoryByPC(void)
+{
+	uint8_t page = getRegisterByName('p');
+	uint8_t cell = getRegisterByName('c');
+	return accessMemoryAt(page, cell);
+}
+
+
+void VirtualMachineState::setRegisterByName(char regnam, uint8_t value)
+{
+	register_map.at(regnam) = value;
+}
+
+
+uint8_t VirtualMachineState::getRegisterByName(char regnam)
+{
+	return register_map.at(regnam);
+}
+
+
+void VirtualMachineState::loadCurrentInstruction()
+{
+	uint8_t instruction = *accessMemoryByPC();
+	internal_register_map.at('i') = instruction;
+}
+
+
+void VirtualMachineState::loadCurrentOperand()
+{
+	uint8_t instruction = *accessMemoryByPC();
+	internal_register_map.at('o') = instruction;
+}
+
+
+
+
+
+
+
+
+
+void VirtualMachine::incrementPC()
+{
+	uint8_t reg_p = state.getRegisterByName('p');
+	uint8_t reg_c = state.getRegisterByName('c');
+	
+	reg_c++;
+	if(reg_c == 0) { reg_p++; }
+	
+
+	state.setRegisterByName('p', reg_p);
+	state.setRegisterByName('c', reg_c);
+}
+
+
+void VirtualMachine::evaluateLoadedOperation()
+{
+	printf("\n virtual machine has called evaluateLoadedOperation().");
+	// TODO
+}
+
+
+void VirtualMachine::doMachineCycle(void)
+{
+	state.simulator_lastread_p = state.register_map.at('p');
+	state.simulator_lastread_c = state.register_map.at('c');
+
+	state.loadCurrentInstruction();
+	incrementPC();
+	state.loadCurrentOperand();
+	incrementPC();
+
+	evaluateLoadedOperation();
+}
+
+
 void VirtualMachine::printRegisters(void)
-{	
+{
 	printf("\nRegisters:");
 	for(char regname : REGISTER_NAMES_STRING) {
 		uint8_t value = state.register_map.at(regname);
@@ -52,6 +135,21 @@ void VirtualMachine::printMemory(
 		printf("\n @$%02x%02x: $%02x   b_", page, curcell, value );
 		cout << bitset<8>(value);
 	}
+}
+
+
+void VirtualMachine::printOperationRegisters(void)
+{
+	uint8_t reg_p = state.register_map.at('p');
+	uint8_t reg_c = state.register_map.at('c');
+	uint8_t instruction = state.internal_register_map.at('i');
+	uint8_t operand = state.internal_register_map.at('o');
+
+	printf("\n oper at $%02x%02x: $%02x %02x ", 
+				state.simulator_lastread_p , 
+				state.simulator_lastread_c , 
+				instruction ,
+				operand );
 }
 
 
@@ -91,25 +189,4 @@ uint8_t VirtualMachine::getRegisterByName(char regnam)
 }
 
 
-
-// legacy:
-/*
-void print_registers(const struct CpuRegisters  *state)
-{
-	printf("\nA = $%02x", state->reg_a);
-	printf("\nB = $%02x", state->reg_b);
-	printf("\nF = $%02x", state->reg_f);
-	printf("\nS = $%02x", state->reg_s);
-	printf("\nX = $%02x", state->reg_x);
-	printf("\nY = $%02x", state->reg_y);
-	printf("\nP = $%02x", state->reg_p);
-	printf("\nC = $%02x", state->reg_c);
-}
-
-void print_memory(const int8_t *memzero, const uint16_t first)
-{
-	for(uint16_t i = 0; i < 8; i++) {
-		printf("\n$(%04x) =  $%02x", (first+i), *(memzero+first+i) );
-	}
-} */
 

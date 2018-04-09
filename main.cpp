@@ -1,4 +1,7 @@
 /* TODO:
+ * VirtualMachine::EvaluateOperation
+ *
+ *
 Rozne sposoby wyswietlania danych: hex, dec, znak
 Wincej operacji
 Flagi
@@ -21,6 +24,11 @@ Upewnic sie, ze logical_shift jest zawsze prawidlowy(zero padding)
 int main()
 {
 	VirtualMachine vm = VirtualMachine();
+
+
+	przejproc::load_a_with_value(&vm, 0xfe);
+	przejproc::transfer_a_to_register(&vm, 'c');
+
 
 	const uint8_t val_a = 'a';
 	przejproc::load_a_with_value(&vm, 0xbb);
@@ -49,10 +57,12 @@ int main()
 	przejproc::load_a_with_value(&vm, val_a);
 	
 	
+	vm.doMachineCycle();
+	vm.doMachineCycle();
 	printf("\n\nAfter operations :");
 	vm.printRegisters();
 	vm.printMemory(0x01, 0x00, 6);
-
+	vm.printOperationRegisters();
 
 	printf("\n\n");
 	return 0;
