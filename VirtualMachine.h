@@ -42,8 +42,6 @@ struct VirtualMachineState {
 
 	VirtualMachineState();
 	~VirtualMachineState();
-
-	
 };
 
 
@@ -89,15 +87,6 @@ public:
 	uint8_t* accessMemoryByPC(void);
 
 
-	/* uint8_t* accessRegister_a (void);
-	uint8_t* accessRegister_b (void);
-	uint8_t* accessRegister_f (void);
-	uint8_t* accessRegister_s (void);
-	uint8_t* accessRegister_x (void);
-	uint8_t* accessRegister_y (void);
-	uint8_t* accessRegister_p (void);
-	uint8_t* accessRegister_c (void); */
-	
 };
 
 void print_registers(const struct CpuRegisters *);

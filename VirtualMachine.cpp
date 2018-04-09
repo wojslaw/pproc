@@ -23,7 +23,7 @@ void VirtualMachine::printRegisters(void)
 	printf("\nRegisters:");
 	for(char regname : REGISTER_NAMES_STRING) {
 		uint8_t value = state.register_map.at(regname);
-		printf("\n %c = $%02x    b_", regname, value);
+		printf("\n %c = $%02x  (%c)    b_", regname, value, value);
 		cout << bitset<8>(value); 
 	}
 }

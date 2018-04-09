@@ -191,3 +191,5 @@ void przejproc::transfer_register_to_a (
 	vm->setRegisterByName('a', regval);
 }
 // }
+
+

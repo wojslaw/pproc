@@ -31,13 +31,13 @@ namespace przejproc {
 	void load_a_from_memory (class VirtualMachine *);
 	void save_a_to_memory (class VirtualMachine *);
 
-	void save_a_to_memory (class VirtualMachine *);
-	void save_b_to_memory (class VirtualMachine *);
+	//void save_a_to_memory (class VirtualMachine *);
+	//void save_b_to_memory (class VirtualMachine *);
 	// load
-	void load_a_from_xy (class VirtualMachine *);
-	void load_a_with_constant (class VirtualMachine *);
-	void load_b_from_xy (class VirtualMachine *);
-	void load_b_with_constant (class VirtualMachine *);
+	//void load_a_from_xy (class VirtualMachine *);
+	//void load_a_with_constant (class VirtualMachine *);
+	//void load_b_from_xy (class VirtualMachine *);
+	//void load_b_with_constant (class VirtualMachine *);
 	// problematic: void set_memory_address
 	
 // Transfer between reg_a
@@ -50,7 +50,7 @@ namespace przejproc {
 
 // Conditions
 	void is_zero (class VirtualMachine);
-
+	void is_a_greater_than_b (class VirtualMachine);
 // Jumps
 	void jump_uncoditional (class VirtualMachine *);
 	void jump_if(class VirtualMachine *);
