@@ -1,14 +1,17 @@
 #include "Instructions.hpp"
 
+
+
 void przejproc::no_operation(class VirtualMachine *vm)
 {
 	// do nothing xD
 	return;
 }
 
+
 // Incrementing
 void przejproc::increment_register (
-		class VirtualMachine *vm, 
+		class VirtualMachine * vm, 
 		char register_name )
 {
 	uint8_t regval = vm->getRegisterByName(register_name);

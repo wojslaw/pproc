@@ -12,38 +12,29 @@ using std::cout;
 #include <bitset>
 using std::bitset;
 
+
+
+#include "Instructions.hpp"
 #include "VirtualMachineState.hpp"
 
 
-
-typedef void Operation(struct VirtualMachineState *);
-typedef Operation (*OperationPtr);
-typedef void (*operation_ptr) (struct VirtualMachineState *);
+//typedef void Operation(struct VirtualMachineState *);
+//typedef Operation (*OperationPtr);
 
 
 
-struct Instruction {
-	uint8_t opcode;
-	std::string mnemonic;
-	OperationPtr operation;
-};
-
-
-struct ISA {
-	Instruction instruction[0xff];
-};
-struct ISA initializeInstructionSet();
-void printInstructionSet();
 
 
 class VirtualMachine {
 private:
 	struct VirtualMachineState state;
-	struct ISA instruction_set;
+	// struct InstructionSet instrset;
 
 	void evaluateLoadedOperation(void);
 	void incrementPC(void);
 public:
+
+
 	void doMachineCycle(void);
 
 	void printRegisters(void);

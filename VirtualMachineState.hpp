@@ -23,6 +23,7 @@ const uint16_t CPU_MEMORY_CELLS_ON_PAGE = 0xff;
 
 struct VirtualMachineState {
 	uint8_t mem[CPU_MEMORY_PAGES][CPU_MEMORY_CELLS_ON_PAGE];
+	
 
 	map<char, uint8_t> internal_register_map;
 	map<char, uint8_t> register_map;

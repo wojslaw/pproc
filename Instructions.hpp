@@ -5,6 +5,30 @@
 
 const uint8_t MEMPAGE_STACK = 0x01;
 
+typedef struct InstructionSet s_instructionset ;
+
+typedef void operation (VirtualMachineState * vmstate);
+typedef operation (*operation_ptr);
+
+struct Instruction {
+	uint8_t opcode;
+	std::string mnemonic;
+	std::string fullname;
+	operation_ptr op_ptr;
+};
+
+
+
+// struct InstructionSet {
+//	uint8_t number_of_operations;
+//	Instruction operation_array[0xff];
+//};
+
+// struct ISA initializeInstructionSet();
+// void printInstructionSet();
+
+
+
 namespace przejproc {
 	
 	void no_operation (class VirtualMachine*);

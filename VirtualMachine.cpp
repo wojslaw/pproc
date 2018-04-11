@@ -17,6 +17,11 @@ void VirtualMachine::incrementPC()
 
 void VirtualMachine::evaluateLoadedOperation()
 {
+	const uint8_t instruction_code = state.internal_register_map.at('i');
+	const uint8_t operand_code = state.internal_register_map.at('o');
+
+
+
 	printf("\n virtual machine has called evaluateLoadedOperation().");
 	// TODO
 }
