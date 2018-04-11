@@ -1,6 +1,7 @@
 #pragma once
 
-#include "VirtualMachine.h"
+#include "VirtualMachineState.hpp"
+#include "VirtualMachine.hpp"
 
 const uint8_t MEMPAGE_STACK = 0x01;
 

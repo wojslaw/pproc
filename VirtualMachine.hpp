@@ -12,6 +12,8 @@ using std::cout;
 #include <bitset>
 using std::bitset;
 
+#include "VirtualMachineState.hpp"
+
 
 const std::string REGISTER_NAMES_STRING = "abfsxypc";
 const std::string INTERNAL_REGISTER_NAMES_STRING = "io";

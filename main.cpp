@@ -15,8 +15,8 @@ Upewnic sie, ze logical_shift jest zawsze prawidlowy(zero padding)
 #include <iostream>
 #include <bitset>
 
-#include "Instructions.h"
-#include "VirtualMachine.h"
+#include "Instructions.hpp"
+#include "VirtualMachine.hpp"
 
 
 
