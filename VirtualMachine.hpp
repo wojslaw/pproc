@@ -33,7 +33,7 @@ private:
 	void evaluateLoadedOperation(void);
 	void incrementPC(void);
 public:
-
+	VirtualMachineState* getPointerToState(void);
 
 	void doMachineCycle(void);
 

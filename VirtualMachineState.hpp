@@ -30,7 +30,6 @@ struct VirtualMachineState {
 
 	uint8_t simulator_lastread_p; // Updated on each clock cycle
 	uint8_t simulator_lastread_c;
-
 // methods - things for operating on the state
 	void loadCurrentInstruction();
 	void loadCurrentOperand();

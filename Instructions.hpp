@@ -1,9 +1,15 @@
 #pragma once
 
-#include "VirtualMachineState.hpp"
-#include "VirtualMachine.hpp"
+#include <iostream>
+#include <string>
+#include <vector>
 
-const uint8_t MEMPAGE_STACK = 0x01;
+#include "VirtualMachineState.hpp"
+#include "InstructionSetImplementation.hpp"
+//#include "VirtualMachine.hpp"
+
+
+const uint8_t _MEMPAGE_STACK = 0x01;
 
 typedef struct InstructionSet s_instructionset ;
 
@@ -18,6 +24,23 @@ struct Instruction {
 };
 
 
+struct InstructionSet {
+	uint8_t number_of_instructions;
+	std::vector<struct Instruction> ins_vector;
+	struct Instruction invalid_instruction = { 0x00, "xxx", "invalid-instruction", nullptr};
+
+	// ctor/init
+	InstructionSet();
+	// methods
+	void printInstructionSet(void);
+	void addInstructionToSet(std::string, std::string, operation_ptr);
+	struct Instruction findInstructionByMnemonic(std::string);
+
+
+	// operations:
+	
+};
+
 
 // struct InstructionSet {
 //	uint8_t number_of_operations;
@@ -28,7 +51,7 @@ struct Instruction {
 // void printInstructionSet();
 
 
-
+/*
 namespace przejproc {
 	
 	void no_operation (class VirtualMachine*);
@@ -83,4 +106,4 @@ namespace przejproc {
 
 
 
-};
+}; */

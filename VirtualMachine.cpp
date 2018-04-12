@@ -1,6 +1,12 @@
 #include "VirtualMachine.hpp"
 
 
+VirtualMachineState* VirtualMachine::getPointerToState()
+{
+	return &(state);
+}
+
+
 void VirtualMachine::incrementPC()
 {
 	uint8_t reg_p = state.getRegisterByName('p');
@@ -22,7 +28,7 @@ void VirtualMachine::evaluateLoadedOperation()
 
 
 
-	printf("\n virtual machine has called evaluateLoadedOperation().");
+	printf("\n Warning: virtual machine has called evaluateLoadedOperation(%02x %02x). Evaluation isn't implemented!.", instruction_code, operand_code);
 	// TODO
 }
 
