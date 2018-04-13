@@ -1,6 +1,16 @@
 #include "VirtualMachine.hpp"
 
 
+VirtualMachine::VirtualMachine()
+{
+
+}
+
+VirtualMachine::VirtualMachine(std::string vmlabel)
+{
+	label = vmlabel;
+}
+
 VirtualMachineState* VirtualMachine::getPointerToState()
 {
 	return &(state);

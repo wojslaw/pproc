@@ -18,22 +18,68 @@ Upewnic sie, ze logical_shift jest zawsze prawidlowy(zero padding)
 #include <iostream>
 #include <bitset>
 
+#include "descriptions.hpp"
+
 #include "Instructions.hpp"
 #include "VirtualMachine.hpp"
 #include "InstructionSetImplementation.hpp"
+#include "Execution_Interpreter.hpp"
 
 
+void doSomeSmallProgram(VirtualMachineState *st);
+void interpretHardCodedProgram(Interpreter ip);
 
 int main()
 {
 	VirtualMachine vm = VirtualMachine();
 	VirtualMachineState *st = vm.getPointerToState();
+	Interpreter intrp = Interpreter(st);
+
+	intrp.printInterpreterFunctions();
+
+	interpretHardCodedProgram(intrp);
+
+	vm.printRegisters();
+	vm.printMemory(0x00, 0x00, 1);
+	vm.printMemory(0x01, 0x00, 4);
+
+	printf("\n\n");
+	return 0;
+}
+
+void interpretHardCodedProgram(Interpreter ip)
+{
+	
+
+	ip.interpretInstruction("lav", "21");
+	ip.interpretInstruction("psh", "a");
+	ip.interpretInstruction("tat", "b");
+	ip.interpretInstruction("inc", "a");
+	ip.interpretInstruction("inc", "a");
+	ip.interpretInstruction("add", "");
+	ip.interpretInstruction("sam", "");
+	ip.interpretInstruction("psh", "a");
+
+}
+
+
+void doSomeSmallProgram(VirtualMachine vm)
+{
+	VirtualMachineState *st = vm.getPointerToState();
+	st->printAdresableRegisters();
 
 	load_a_with_value(st, 0x01);
 	transfer_a_to_register(st, 'p');
 
 
 	const uint8_t val_a = 'a';
+	push_register(st, 'a');
+	
+	load_a_with_value(st, 0x01);
+	transfer_a_to_register(st, 'x');
+	load_a_with_value(st, 0x00);
+	transfer_a_to_register(st, 'y');
+
 	load_a_with_value(st, 0xbb);
 	transfer_a_to_register(st, 'b');
 	load_a_with_value(st, val_a);
@@ -54,6 +100,7 @@ int main()
 	push_register(st, 'a');
 
 
+	load_a_from_memory(st);
 
 	load_a_with_value(st, 0xbb);
 	transfer_a_to_register(st, 'b');
@@ -63,49 +110,10 @@ int main()
 	vm.doMachineCycle();
 	vm.doMachineCycle();
 	printf("\n\nAfter operations :");
-/*
-	przejproc::load_a_with_value(&vm, 0x01);
-	przejproc::transfer_a_to_register(&vm, 'p');
-
-
-	const uint8_t val_a = 'a';
-	przejproc::load_a_with_value(&vm, 0xbb);
-	przejproc::transfer_a_to_register(&vm, 'b');
-	przejproc::load_a_with_value(&vm, val_a);
-
-
-	przejproc::load_a_with_value(&vm, val_a);
-	przejproc::and_bitwise(&vm);
-	przejproc::push_register(&vm, 'a');
-
-
-	przejproc::load_a_with_value(&vm, val_a);
-	przejproc::not_bitwise(&vm);
-	przejproc::push_register(&vm, 'a');
-
-
-	przejproc::load_a_with_value(&vm, val_a);
-	przejproc::or_bitwise(&vm);
-	przejproc::push_register(&vm, 'a');
-
-
-
-	przejproc::load_a_with_value(&vm, 0xbb);
-	przejproc::transfer_a_to_register(&vm, 'b');
-	przejproc::load_a_with_value(&vm, val_a);
-	
-	
-	vm.doMachineCycle();
-	vm.doMachineCycle();
-	printf("\n\nAfter operations :");
-*/
 	vm.printRegisters();
 	vm.printMemory(0x01, 0x00, 6);
 	vm.printOperationRegisters();
 
-	printf("\n\n");
-	return 0;
+	GLOBAL_INSTRUCTION_DESCRIPTION_MAP.printDescriptionMap();
+
 }
-
-
-

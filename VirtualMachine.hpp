@@ -33,6 +33,10 @@ private:
 	void evaluateLoadedOperation(void);
 	void incrementPC(void);
 public:
+	std::string label;
+	VirtualMachine();
+	VirtualMachine(std::string);
+
 	VirtualMachineState* getPointerToState(void);
 
 	void doMachineCycle(void);

@@ -20,7 +20,7 @@ void or_bitwise (class VirtualMachineState*);
 void and_bitwise (class VirtualMachineState*);
 void not_bitwise (class VirtualMachineState*);
 void rotate_left (class VirtualMachineState*);
-void rotate_right (class VirtualMachineStateState *);
+void rotate_right (class VirtualMachineState*);
 void logical_shift_left (class VirtualMachineState*);
 void logical_shift_right (class VirtualMachineState*);
 
