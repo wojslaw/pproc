@@ -6,7 +6,7 @@ Dekodowanie instrukcji
 
 
 Rozne sposoby wyswietlania danych: hex, dec, znak
-Wincej operacji
+Operacje
 Flagi
 Upewnic sie, ze logical_shift jest zawsze prawidlowy(zero padding)
 */
