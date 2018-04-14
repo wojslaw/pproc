@@ -1,8 +1,24 @@
 #include "Instructions.hpp"
 
+struct Instruction Instruction::invalidInstruction()
+{
+	struct Instruction invins;
+	invins.ins.voidFunctionPointer = nullptr;
+	invins.adrestype = -1;
+	invins.opcode = -1;
+	invins.mnemonic = "XXX";
+	invins.fullname = "INVALID-INSTRUCTION";
+
+	invins.op_ptr = 0;
+
+	return invins;
+}
+
 
 InstructionSet::InstructionSet()
 {
+	invalid_instruction = Instruction::invalidInstruction();
+
 	ins_vector.reserve(0xff);
 /*
 	// List of instructions/operations, added to the vector:

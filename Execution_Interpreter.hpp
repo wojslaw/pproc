@@ -28,7 +28,6 @@ struct interpreter_function {
 	Instptr instptr;
 	std::string fullname;
 	std::string mnemonic;
-
 };
 
 class Interpreter {
