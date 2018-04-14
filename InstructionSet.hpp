@@ -7,54 +7,41 @@
 #include <vector>
 
 
-#include "VirtualMachineState.hpp"
 #include "InstructionSetImplementation.hpp"
-//#include "VirtualMachine.hpp"
-
-
-const uint8_t _MEMPAGE_STACK = 0x01;
-
-typedef struct InstructionSet s_instructionset ;
 
 
 
-typedef void operation (VirtualMachineState * vmstate);
-typedef operation (*operation_ptr);
-
-struct Instruction {
-	enum InstructionAdrestype {implied, reg, value};
-	uint8_t opcode;
-	std::string mnemonic;
-	std::string fullname;
-	
-	int adrestype; // See: `union InstructionAdrestype`
-	union InstructionPointer {	
-		void (*impliedAdres) (class VirtualMachineState *);
-		void (*registerAdres) (class VirtualMachineState *, char);
-		void (*valueAdres) (class VirtualMachineState *, uint8_t);
-		
-		void (*voidFunctionPointer)(void);
-	} ins;
-	
-	operation_ptr op_ptr;
-
-
-	// methods
-	static struct Instruction invalidInstruction();
-};
+//typedef struct InstructionSet s_instructionset ;
 
 
 struct InstructionSet {
 	std::vector<struct Instruction> instructions_vector;
-	uint8_t number_of_instructions;
-	std::vector<struct Instruction> ins_vector;
 	struct Instruction invalid_instruction;
-
+	
+	uint8_t number_of_instructions;
+	//std::vector<struct Instruction> ins_vector;
+	
 	// ctor/init
 	InstructionSet();
+	
 	// methods
+		// add instruction
+	void addInstructionToSet(
+			std::string mnemonic, 
+			std::string fullname, 
+			operationPointer_impliedAdres op_ptr );
+	void addInstructionToSet(
+			std::string mnemonic, 
+			std::string fullname, 
+			operationPointer_registerAdres op_ptr );
+	void addInstructionToSet(
+			std::string mnemonic, 
+			std::string fullname, 
+			operationPointer_valueAdres op_ptr );
+		
+		// other
 	void printInstructionSet(void);
-	void addInstructionToSet(std::string, std::string, operation_ptr);
+
 	struct Instruction findInstructionByMnemonic(std::string);
 
 

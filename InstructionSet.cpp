@@ -1,31 +1,52 @@
-#include "Instructions.hpp"
+#include "InstructionSet.hpp"
 
-struct Instruction Instruction::invalidInstruction()
+
+
+void InstructionSet::addInstructionToSet(
+		std::string mnemonic, 
+		std::string fullname, 
+		operationPointer_impliedAdres op_ptr )
 {
-	struct Instruction invins;
-	invins.ins.voidFunctionPointer = nullptr;
-	invins.adrestype = -1;
-	invins.opcode = -1;
-	invins.mnemonic = "XXX";
-	invins.fullname = "INVALID-INSTRUCTION";
-
-	invins.op_ptr = 0;
-
-	return invins;
+	instructions_vector.push_back( Instruction(mnemonic, fullname, op_ptr) );
+	number_of_instructions++;
 }
-
+void InstructionSet::addInstructionToSet(
+		std::string mnemonic, 
+		std::string fullname, 
+		operationPointer_registerAdres op_ptr )
+{
+	instructions_vector.push_back( Instruction(mnemonic, fullname, op_ptr) );
+	number_of_instructions++;
+}
+void InstructionSet::addInstructionToSet(
+		std::string mnemonic, 
+		std::string fullname, 
+		operationPointer_valueAdres op_ptr )
+{
+	instructions_vector.push_back( Instruction(mnemonic, fullname, op_ptr) );
+	number_of_instructions++;
+}
 
 InstructionSet::InstructionSet()
 {
-	invalid_instruction = Instruction::invalidInstruction();
+	invalid_instruction = Instruction();
+	int implied = Instruction::InstructionAdrestype::implied;
+	int reg = Instruction::InstructionAdrestype::reg;
+	int value = Instruction::InstructionAdrestype::value;
 
-	ins_vector.reserve(0xff);
-/*
+
+	instructions_vector.reserve(0xff);
+	
+	addInstructionToSet("nop", "no-operation", &no_operation );
+
+	addInstructionToSet("inc", "increment-register", &increment_register);
+
+	//addInstructionToSet( "inc", "increment_register" &increment_register);
+
+	/*
 	// List of instructions/operations, added to the vector:
-	addInstructionToSet("nop", "no-operation" &no_operation );
 
 	// Increment/decrement will be commonly used on probably all registers, so I decided to just make a set of inc/dec operations for all registers
-	addInstructionToSet( "inc", "increment_register" &increment_register );
 	addInstructionToSet( "dec", "decrement-register" &decrement_register );
 
 	// ALU:
@@ -64,34 +85,25 @@ InstructionSet::InstructionSet()
 	addInstructionToSet("jif", "jump-if", &jump_if);
 	addInstructionToSet("jin", "jump-if-not", &jump_if_not);
 */
-
+	if ( instructions_vector.size() != number_of_instructions ) { std::cout << "\nWarning: size of instructions_vector is different from the count number_of_instructions!"; }
 }
+
 
 void InstructionSet::printInstructionSet()
 {
-	for(auto ins : ins_vector ) {
-		printf("\n %02x:", ins.opcode );
-		std::cout << ins.mnemonic << ", " << ins.fullname;
-		printf("(funptr = %p)", ins.op_ptr);
+	for(auto instruction : instructions_vector ) {
+		printf("\n");
+		instruction.printInstruction();
 	}
-}
-
-void InstructionSet::addInstructionToSet(
-		std::string mnemonic, 
-		std::string fullname, 
-		operation_ptr function_pointer)
-{
-	printf("Not finished adding instruction");
-	number_of_instructions++;
 }
 
 
 struct Instruction InstructionSet::findInstructionByMnemonic(std::string mnemonic)
 {
 	printf("Not finished finding instruction");
-	for( auto ins : ins_vector ) {
-		if( ins.mnemonic == mnemonic ) {
-			return ins;
+	for( auto instruction : instructions_vector ) {
+		if( instruction.mnemonic == mnemonic ) {
+			return instruction;
 		}
 	}
 	

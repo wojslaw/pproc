@@ -1,4 +1,6 @@
 /* TODO:
+make: Nothing to be done for 'all'.
+rm -f  ./descriptions.o  ./Execution_Interpreter.o  ./Instructions.o  ./InstructionSetImplementation.o  ./main.o  ./VirtualMachine.o  ./VirtualMachineState.o
  * VirtualMachine::EvaluateOperation
  *
  *
@@ -20,7 +22,8 @@ Upewnic sie, ze logical_shift jest zawsze prawidlowy(zero padding)
 
 #include "descriptions.hpp"
 
-#include "Instructions.hpp"
+#include "InstructionSet.hpp"
+#include "Instruction.hpp"
 #include "VirtualMachine.hpp"
 #include "InstructionSetImplementation.hpp"
 #include "Execution_Interpreter.hpp"
@@ -29,28 +32,33 @@ Upewnic sie, ze logical_shift jest zawsze prawidlowy(zero padding)
 void doSomeSmallProgram(VirtualMachineState *st);
 void interpretHardCodedProgram(Interpreter ip);
 
+
 int main()
 {
+
 	VirtualMachine vm = VirtualMachine();
-	VirtualMachineState *st = vm.getPointerToState();
-	Interpreter intrp = Interpreter(st);
+	vm.isa.printInstructionSet();
+	
+//	VirtualMachineState *st = vm.getPointerToState();
 
-	intrp.printInterpreterFunctions();
+//	Interpreter intrp = Interpreter(st);
 
-	interpretHardCodedProgram(intrp);
+//	intrp.printInterpreterFunctions();
 
-	vm.printRegisters();
-	vm.printMemory(0x00, 0x00, 1);
-	vm.printMemory(0x01, 0x00, 4);
+//	interpretHardCodedProgram(intrp);
+
+//	vm.printRegisters();
+//	vm.printMemory(0x00, 0x00, 1);
+//	vm.printMemory(0x01, 0x00, 4);
 
 	printf("\n\n");
 	return 0;
 }
 
+
+
 void interpretHardCodedProgram(Interpreter ip)
 {
-	
-
 	ip.interpretInstruction("lav", "21");
 	ip.interpretInstruction("psh", "a");
 	ip.interpretInstruction("tat", "b");
@@ -59,7 +67,6 @@ void interpretHardCodedProgram(Interpreter ip)
 	ip.interpretInstruction("add", "");
 	ip.interpretInstruction("sam", "");
 	ip.interpretInstruction("psh", "a");
-
 }
 
 

@@ -2,7 +2,8 @@
 
 #include <cstdio>
 
-#include "VirtualMachineState.hpp"
+#include "typedefs.hpp"
+#include "Instruction.hpp"
 
 static const uint8_t MEMPAGE_STACK = 0x01;
 	

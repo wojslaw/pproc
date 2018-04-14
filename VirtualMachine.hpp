@@ -14,7 +14,7 @@ using std::bitset;
 
 
 
-#include "Instructions.hpp"
+#include "InstructionSet.hpp"
 #include "VirtualMachineState.hpp"
 
 
@@ -26,13 +26,16 @@ using std::bitset;
 
 
 class VirtualMachine {
-private:
+public:
 	struct VirtualMachineState state;
-	// struct InstructionSet instrset;
+	struct InstructionSet isa;
 
 	void evaluateLoadedOperation(void);
 	void incrementPC(void);
-public:
+	
+	
+	
+	
 	std::string label;
 	VirtualMachine();
 	VirtualMachine(std::string);

@@ -3,7 +3,8 @@
 
 VirtualMachine::VirtualMachine()
 {
-
+	state = VirtualMachineState();
+	isa = InstructionSet();
 }
 
 VirtualMachine::VirtualMachine(std::string vmlabel)
