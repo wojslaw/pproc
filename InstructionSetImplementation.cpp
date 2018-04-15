@@ -119,15 +119,6 @@ void  not_bitwise (class VirtualMachineState *vmstate)
 }
 
 
-void  rotate_left (class VirtualMachineState *vmstate)
-{
-	printf("\n WARNING: Rotate unimplemented.");
-}
-void  rotate_right (class VirtualMachineStateState *vmstate)
-{
-	printf("\n WARNING: Rotate unimplemented.");
-}
-// 
 void  logical_shift_left (class VirtualMachineState *vmstate)
 {
 	uint8_t reg_a = vmstate->getRegisterByName('a');
@@ -150,7 +141,7 @@ void  logical_shift_right (class VirtualMachineState *vmstate)
 
 // { 
 void  load_a_with_value (
-		class VirtualMachineState * vmstate, 
+		class VirtualMachineState *vmstate, 
 		uint8_t value )
 {
 	vmstate->setRegisterByName('a', value);
@@ -194,5 +185,42 @@ void  transfer_register_to_a (
 	vmstate->setRegisterByName('a', regval);
 }
 // }
+
+// Conditions
+void is_zero (class VirtualMachineState *vmstate)
+{
+	if ( vmstate->getRegisterByName('a') == 0 ) {
+		vmstate->setRegisterByName('f', 1);
+	} else {
+		vmstate->setRegisterByName('f', 0);
+	}
+}
+void is_a_greater_than_b (class VirtualMachineState *vmstate)
+{
+	if ( vmstate->getRegisterByName('a') > vmstate->getRegisterByName('b') ) {
+		vmstate->setRegisterByName('f', 1);
+	} else {
+		vmstate->setRegisterByName('f', 0);
+	}
+}
+
+// Jumps
+void jump_uncoditional (class VirtualMachineState *vmstate)
+{
+	vmstate->setRegisterByName('p', vmstate->getRegisterByName('x') );
+	vmstate->setRegisterByName('c', vmstate->getRegisterByName('y') );
+}
+void jump_if(class VirtualMachineState *vmstate)
+{
+	if( vmstate->getRegisterByName('f') == 1 ) {
+		jump_uncoditional(vmstate);
+	}
+}
+void jump_if_not(class VirtualMachineState *vmstate)
+{
+	if( vmstate->getRegisterByName('f') == 0 ) {
+		jump_uncoditional(vmstate);
+	}
+}
 
 // */

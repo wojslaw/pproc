@@ -1,18 +1,75 @@
 #include "Execution_Interpreter.hpp"
 
+Interpreter::Interpreter(VirtualMachine *virtual_machine_ptr)
+{
+	vm = virtual_machine_ptr;
+}
+
+
 
 void Interpreter::interpretInstruction(string instruction, string operand)
 {
+	const int adrt_implied = Instruction::InstructionAdrestype::implied;
+	const int adrt_reg = Instruction::InstructionAdrestype::reg;
+	const int adrt_value = Instruction::InstructionAdrestype::value;
+	
+	uint8_t val = 0 ;
+	
+	Instruction ins = vm->findInstructionByMnemonic(instruction);
+	if( ins.adrestype == -1 ) {
+		std::cout << "\nReceived invalid function. Maybe mnemonic isn't matching?";
+	}
+	int adresing_type;
+	// 1. find out required adresing type:
+	if(operand.size() == 0) {
+		adresing_type = adrt_implied;
+	} else if(operand.size() == 1) {
+		adresing_type = adrt_reg;
+	} else if(operand.size() > 2 && operand.at(0) == '0' && operand.at(1) == 'x') {
+		adresing_type = adrt_value;
+		val = std::stoi(operand, 0, 16);
+	} else {
+		adresing_type = -1;
+		std::cout << "\nInterpreter couldn't match any adrestype for operand: `" << operand << "`";
+		return;
+	}
+
+	// 2. Do it!
+	if(ins.adrestype != adresing_type) {
+		std::cout << "\nUnmatching adrestype! (" << ins.adrestype << "vs" << adresing_type << ")";
+	} else {
+		switch (adresing_type) {
+			case adrt_implied: 
+				(*ins.opptr.impliedAdres) (vm->getPointerToState());
+				return;
+			case adrt_reg:
+				(*ins.opptr.registerAdres) (vm->getPointerToState(), operand.at(0) );
+				return;
+			case adrt_value:
+				(*ins.opptr.valueAdres) ( vm->getPointerToState(), val );
+				return;
+			default :
+				std::cout << "\nWrong adrestype???";
+		}
+	}
+
+	
+
+
+	std::cout << "\nNo match for `" << instruction << "`";
+
+
+
 	//std::cout <<" \n\n" << operand.size() << "\n\n";
 	// 1. If operand is empty, then adresing is implied
-	if( operand.empty() ) {
+	/*if( operand.empty() ) {
 		for( auto fun : functionvector ) {
 			if( fun.mnemonic == instruction ) {
 				(*fun.instptr.implied) (vmstate);
 				return;
 			}
 		}
-	} else if ( operand.size() > 1 ) {
+	} else if ( operand.size() > 1 && operand.at(0) == '0' && operand.at(1) == 'x' ) {
 		for( auto fun : functionvector ) {
 			if(fun.mnemonic == instruction) {
 				(*fun.instptr.value) (vmstate, stoi(operand) );
@@ -26,16 +83,16 @@ void Interpreter::interpretInstruction(string instruction, string operand)
 				return;
 			}
 		}
-	}
+	}*/
 
 
 
 
-	std::cout << "\nCouldn't find any instruction to interpret: ` " << instruction << "`";
+	std::cout << "\nCouldn't interpret: `" << instruction << "`";
 }
 
 
-
+/*
 void Interpreter::addFunction_implied( 
 		std::string fullname ,
 		instructionptr_impliedOperand insptr)
@@ -73,13 +130,14 @@ void Interpreter::addFunction_value(
 	new_fun.mnemonic = GLOBAL_INSTRUCTION_DESCRIPTION_MAP.at(fullname);
 	
 	functionvector.push_back(new_fun);
-}
+} */
 
 
-
-Interpreter::Interpreter(VirtualMachineState *st)
+/*
+Interpreter::Interpreter(VirtualMachine *virtualmachineptr)
 {
-	vmstate = st;
+	vm = virtualmachineptr;
+	
 	
 	addFunction_implied( "no-operation", &no_operation );
 	addFunction_implied( "add-with-carry", &add_with_carry   );
@@ -104,26 +162,12 @@ Interpreter::Interpreter(VirtualMachineState *st)
 	addFunction_register( "push-register", &push_register  );
 	addFunction_register( "pop-register", &pop_register  );
 	addFunction_register( "increment-register", &increment_register );
-	addFunction_register( "decrement-register", &decrement_register );
+	addFunction_register( "decrement-register", &decrement_register ); 
 	
-}
+}*/
 
-void Interpreter::printFunction(interpreter_function fun)
-{
-	std::cout << fun.adrestype << ":`" << fun.mnemonic << "`:`" << fun.fullname << "`(@ " <<  fun.instptr.voidptr << ")\n" ;
-}
 
-void Interpreter::printAllFunctionsOfAdresType(int adtype)
-{
-	for (auto fun : functionvector ) {
-		if ( fun.adrestype == adtype)  {
-			printFunction(fun);
-		}
-			
-	}
-}
-
-void Interpreter::printInterpreterFunctions()
+/*void Interpreter::printInterpreterFunctions()
 {
 	std::cout << "\nFunctions loaded by interpreter:" << std::endl;
 	std::cout << "\nadrestype(implied: " << interpreter_function::InstructionAdrestype::implied << ", register: " << interpreter_function::InstructionAdrestype::reg << ", ";
@@ -140,6 +184,6 @@ void Interpreter::printInterpreterFunctions()
 	std::cout << "\n\t\tVALUE:\n";
 	printAllFunctionsOfAdresType(interpreter_function::InstructionAdrestype::value);
 
-}
+} */
 
 

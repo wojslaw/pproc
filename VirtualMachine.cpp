@@ -32,6 +32,18 @@ void VirtualMachine::incrementPC()
 }
 
 
+Instruction VirtualMachine::findInstructionByMnemonic(std::string mnemonic)
+{
+	for( auto ins : isa.instructions_vector ) {
+		if(ins.mnemonic == mnemonic ) {
+			return ins;
+		}
+	}
+	std::cout << "\nCouldn't find any instruction matching mnemonic `" << mnemonic << "`";
+	return Instruction();
+}
+
+
 void VirtualMachine::evaluateLoadedOperation()
 {
 	const uint8_t instruction_code = state.internal_register_map.at('i');

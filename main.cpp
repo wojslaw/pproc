@@ -1,6 +1,10 @@
 /* TODO:
-make: Nothing to be done for 'all'.
-rm -f  ./descriptions.o  ./Execution_Interpreter.o  ./Instructions.o  ./InstructionSetImplementation.o  ./main.o  ./VirtualMachine.o  ./VirtualMachineState.o
+
+
+	NIE DZIALA CZYTANIE WARTOSCI LICZBOWYCH
+
+
+ *
  * VirtualMachine::EvaluateOperation
  *
  *
@@ -20,7 +24,6 @@ Upewnic sie, ze logical_shift jest zawsze prawidlowy(zero padding)
 #include <iostream>
 #include <bitset>
 
-#include "descriptions.hpp"
 
 #include "InstructionSet.hpp"
 #include "Instruction.hpp"
@@ -37,19 +40,17 @@ int main()
 {
 
 	VirtualMachine vm = VirtualMachine();
-	vm.isa.printInstructionSet();
+	//vm.isa.printInstructionSet();
 	
-//	VirtualMachineState *st = vm.getPointerToState();
+	Interpreter intrp = Interpreter(&vm);
 
-//	Interpreter intrp = Interpreter(st);
 
-//	intrp.printInterpreterFunctions();
+	interpretHardCodedProgram(intrp);
 
-//	interpretHardCodedProgram(intrp);
 
-//	vm.printRegisters();
-//	vm.printMemory(0x00, 0x00, 1);
-//	vm.printMemory(0x01, 0x00, 4);
+	vm.printRegisters();
+	vm.printMemory(0x00, 0x00, 1);
+	vm.printMemory(0x01, 0x00, 4);
 
 	printf("\n\n");
 	return 0;
@@ -59,14 +60,14 @@ int main()
 
 void interpretHardCodedProgram(Interpreter ip)
 {
-	ip.interpretInstruction("lav", "21");
+	ip.interpretInstruction("ldv", "0x21");
 	ip.interpretInstruction("psh", "a");
-	ip.interpretInstruction("tat", "b");
-	ip.interpretInstruction("inc", "a");
-	ip.interpretInstruction("inc", "a");
-	ip.interpretInstruction("add", "");
-	ip.interpretInstruction("sam", "");
-	ip.interpretInstruction("psh", "a");
+	ip.interpretInstruction("tat", "y");
+	ip.interpretInstruction("tat", "x");
+	ip.interpretInstruction("ldv", "0x00");
+	ip.interpretInstruction("isz", "");
+	ip.interpretInstruction("jif", "");
+	ip.interpretInstruction("shr", "");
 }
 
 
@@ -121,6 +122,5 @@ void doSomeSmallProgram(VirtualMachine vm)
 	vm.printMemory(0x01, 0x00, 6);
 	vm.printOperationRegisters();
 
-	GLOBAL_INSTRUCTION_DESCRIPTION_MAP.printDescriptionMap();
 
 }

@@ -6,16 +6,18 @@
 #include <iostream>
 #include <cstdio>
 
-#include "descriptions.hpp"
-#include "VirtualMachineState.hpp"
-#include "InstructionSetImplementation.hpp"
+#include "VirtualMachine.hpp"
 
-typedef void (*instructionptr_impliedOperand) (class VirtualMachineState *);
-typedef void (*instructionptr_register) (class VirtualMachineState *, char);
-typedef void (*instructionptr_value) (class VirtualMachineState *, uint8_t);
+//#include "descriptions.hpp"
+//#include "VirtualMachineState.hpp"
+//#include "InstructionSetImplementation.hpp"
+
+//typedef void (*instructionptr_impliedOperand) (class VirtualMachineState *);
+//typedef void (*instructionptr_register) (class VirtualMachineState *, char);
+//typedef void (*instructionptr_value) (class VirtualMachineState *, uint8_t);
 
 
-union Instptr { 
+/*union Instptr { 
 	void * voidptr;
 	instructionptr_impliedOperand implied;
 	instructionptr_register reg;
@@ -28,11 +30,18 @@ struct interpreter_function {
 	Instptr instptr;
 	std::string fullname;
 	std::string mnemonic;
-};
+}; */
 
 class Interpreter {
-private:
-	std::vector<interpreter_function> functionvector;
+public:
+	VirtualMachine *vm;
+	Interpreter(VirtualMachine *);
+
+
+	void interpretInstruction(string instruction, string operand);
+};
+
+	/*std::vector<interpreter_function> functionvector;
 	void addFunction_implied( 
 			std::string fullname ,
 			instructionptr_impliedOperand );
@@ -43,17 +52,14 @@ private:
 			std::string fullname, 
 			instructionptr_value );
 
-	void evaluateFunction();
+	void evaluateFunction(); */
 	
-	VirtualMachineState *vmstate;
-	void printFunction(interpreter_function);
-	void printAllFunctionsOfAdresType(int adtype);
-public:
-	void printInterpreterFunctions();
-	void interpretInstruction(string instruction, string operand);
+	// VirtualMachineState *vmstate;
+	//void printFunction(interpreter_function);
+	//void printAllFunctionsOfAdresType(int adtype);
+	
+	//void printInterpreterFunctions();
+	//void interpretInstruction(string instruction, string operand);
 
-	Interpreter(VirtualMachineState *);
-	// methods
-	std::vector<std::string> parseStringIntoInstructions();
 
-};
+

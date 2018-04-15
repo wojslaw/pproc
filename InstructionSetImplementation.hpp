@@ -32,14 +32,6 @@ void load_a_with_value (class VirtualMachineState *, uint8_t value);
 void load_a_from_memory (class VirtualMachineState *);
 void save_a_to_memory (class VirtualMachineState *);
 
-//void save_a_to_memory (class VirtualMachineState *);
-//void save_b_to_memory (class VirtualMachineState *);
-// load
-//void load_a_from_xy (class VirtualMachineState *);
-//void load_a_with_constant (class VirtualMachineState *);
-//void load_b_from_xy (class VirtualMachineState *);
-//void load_b_with_constant (class VirtualMachineState *);
-// problematic: void set_memory_address
 
 // Transfer between reg_a
 void transfer_a_to_register (class VirtualMachineState *, char register_name);
@@ -50,8 +42,8 @@ void push_register(class VirtualMachineState*, char register_name);
 void pop_register(class VirtualMachineState*, char register_name);
 
 // Conditions
-void is_zero (class VirtualMachineState);
-void is_a_greater_than_b (class VirtualMachineState);
+void is_zero (class VirtualMachineState *);
+void is_a_greater_than_b (class VirtualMachineState *);
 // Jumps
 void jump_uncoditional (class VirtualMachineState *);
 void jump_if(class VirtualMachineState *);

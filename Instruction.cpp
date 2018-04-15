@@ -60,5 +60,5 @@ void Instruction::printInstruction()
 	std::cout << mnemonic;
 	printf("`:`");
 	std::cout << fullname;
-	printf("` (@%p)", opptr.voidFunctionPointer);
+	printf("`:`0x%x`adrestype (@%p)", adrestype, opptr.voidFunctionPointer);
 }

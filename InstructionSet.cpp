@@ -40,14 +40,7 @@ InstructionSet::InstructionSet()
 	addInstructionToSet("nop", "no-operation", &no_operation );
 
 	addInstructionToSet("inc", "increment-register", &increment_register);
-
-	//addInstructionToSet( "inc", "increment_register" &increment_register);
-
-	/*
-	// List of instructions/operations, added to the vector:
-
-	// Increment/decrement will be commonly used on probably all registers, so I decided to just make a set of inc/dec operations for all registers
-	addInstructionToSet( "dec", "decrement-register" &decrement_register );
+	addInstructionToSet("dec", "decrement-register", &decrement_register );
 
 	// ALU:
 	addInstructionToSet("add", "add-with-carry", &add_with_carry );
@@ -56,10 +49,8 @@ InstructionSet::InstructionSet()
 	addInstructionToSet("ora", "or-bitwise", &or_bitwise );
 	addInstructionToSet("and", "and-bitwise", &and_bitwise );
 	addInstructionToSet("not", "not-bitwise", &not_bitwise );
-	addInstructionToSet("rol", "rotate-left", &rotate_left );
-	addInstructionToSet("ror", "rotate-right", &rotate_right );
-	addInstructionToSet("shl", "logical-shift-left", &logical_shift_left );
-	addInstructionToSet("shr", "logical-shift-right", &logical_shift_right );
+	addInstructionToSet("shl", "shift-left", &logical_shift_left );
+	addInstructionToSet("shr", "shift-right", &logical_shift_right );
 
 
 	// Loading registers
@@ -84,8 +75,17 @@ InstructionSet::InstructionSet()
 	addInstructionToSet("jmp", "jump-uncoditional", &jump_uncoditional );
 	addInstructionToSet("jif", "jump-if", &jump_if);
 	addInstructionToSet("jin", "jump-if-not", &jump_if_not);
-*/
-	if ( instructions_vector.size() != number_of_instructions ) { std::cout << "\nWarning: size of instructions_vector is different from the count number_of_instructions!"; }
+	
+	
+	if ( instructions_vector.size() != number_of_instructions ) { 
+		std::cout << "\nWarning: size of instructions_vector is different from the count number_of_instructions!"; 
+	} else {
+		//set opcodes:
+		for( size_t i = 0; i < instructions_vector.size(); i++) {
+			instructions_vector.at(i).opcode = i ;
+		}
+	}
+	
 }
 
 
@@ -100,7 +100,6 @@ void InstructionSet::printInstructionSet()
 
 struct Instruction InstructionSet::findInstructionByMnemonic(std::string mnemonic)
 {
-	printf("Not finished finding instruction");
 	for( auto instruction : instructions_vector ) {
 		if( instruction.mnemonic == mnemonic ) {
 			return instruction;

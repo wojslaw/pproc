@@ -30,6 +30,7 @@ public:
 	struct VirtualMachineState state;
 	struct InstructionSet isa;
 
+	Instruction findInstructionByMnemonic(std::string);
 	void evaluateLoadedOperation(void);
 	void incrementPC(void);
 	
