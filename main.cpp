@@ -1,9 +1,4 @@
 /* TODO:
-
-
-	NIE DZIALA CZYTANIE WARTOSCI LICZBOWYCH
-
-
  *
  * VirtualMachine::EvaluateOperation
  *
