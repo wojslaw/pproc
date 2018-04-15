@@ -8,58 +8,30 @@
 
 #include "VirtualMachine.hpp"
 
-//#include "descriptions.hpp"
-//#include "VirtualMachineState.hpp"
-//#include "InstructionSetImplementation.hpp"
-
-//typedef void (*instructionptr_impliedOperand) (class VirtualMachineState *);
-//typedef void (*instructionptr_register) (class VirtualMachineState *, char);
-//typedef void (*instructionptr_value) (class VirtualMachineState *, uint8_t);
-
-
-/*union Instptr { 
-	void * voidptr;
-	instructionptr_impliedOperand implied;
-	instructionptr_register reg;
-	instructionptr_value value;
-};
-
-struct interpreter_function {
-	enum InstructionAdrestype {implied, reg, value};
-	int adrestype;
-	Instptr instptr;
-	std::string fullname;
-	std::string mnemonic;
-}; */
 
 class Interpreter {
+private:
+	std::string loadedTextToInterpret;
+	std::vector<std::string> history_vector;
+	struct InterpretableInstruction {
+		std::string instruction;
+		std::string operand;
+	} interpretable_instruction;
+
 public:
 	VirtualMachine *vm;
 	Interpreter(VirtualMachine *);
 
+	void interpretInstruction(std::string instruction, std::string operand);
+	
 
-	void interpretInstruction(string instruction, string operand);
+	void interpretGivenString_parens(std::string); /** Requires the instruction to be inside parentheses */
+	
+
+
+
+	
 };
-
-	/*std::vector<interpreter_function> functionvector;
-	void addFunction_implied( 
-			std::string fullname ,
-			instructionptr_impliedOperand );
-	void addFunction_register(
-			std::string fullname ,
-			instructionptr_register );
-	void addFunction_value(	
-			std::string fullname, 
-			instructionptr_value );
-
-	void evaluateFunction(); */
-	
-	// VirtualMachineState *vmstate;
-	//void printFunction(interpreter_function);
-	//void printAllFunctionsOfAdresType(int adtype);
-	
-	//void printInterpreterFunctions();
-	//void interpretInstruction(string instruction, string operand);
 
 
 

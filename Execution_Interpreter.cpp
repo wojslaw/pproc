@@ -7,7 +7,7 @@ Interpreter::Interpreter(VirtualMachine *virtual_machine_ptr)
 
 
 
-void Interpreter::interpretInstruction(string instruction, string operand)
+void Interpreter::interpretInstruction(std::string instruction, std::string operand)
 {
 	const int adrt_implied = Instruction::InstructionAdrestype::implied;
 	const int adrt_reg = Instruction::InstructionAdrestype::reg;
@@ -25,7 +25,7 @@ void Interpreter::interpretInstruction(string instruction, string operand)
 		adresing_type = adrt_implied;
 	} else if(operand.size() == 1) {
 		adresing_type = adrt_reg;
-	} else if(operand.size() > 2 && operand.at(0) == '0' && operand.at(1) == 'x') {
+	} else if(operand.size()== 4 && operand.at(0) == '0' && operand.at(1) == 'x') {
 		adresing_type = adrt_value;
 		val = std::stoi(operand, 0, 16);
 	} else {
@@ -53,137 +53,67 @@ void Interpreter::interpretInstruction(string instruction, string operand)
 		}
 	}
 
-	
-
 
 	std::cout << "\nNo match for `" << instruction << "`";
-
-
-
-	//std::cout <<" \n\n" << operand.size() << "\n\n";
-	// 1. If operand is empty, then adresing is implied
-	/*if( operand.empty() ) {
-		for( auto fun : functionvector ) {
-			if( fun.mnemonic == instruction ) {
-				(*fun.instptr.implied) (vmstate);
-				return;
-			}
-		}
-	} else if ( operand.size() > 1 && operand.at(0) == '0' && operand.at(1) == 'x' ) {
-		for( auto fun : functionvector ) {
-			if(fun.mnemonic == instruction) {
-				(*fun.instptr.value) (vmstate, stoi(operand) );
-				return;
-			}
-		}
-	} else if (operand.size() == 1 ) {
-		for( auto fun : functionvector ) {
-			if(fun.mnemonic == instruction) {
-				(*fun.instptr.reg) (vmstate, operand.at(0) );
-				return;
-			}
-		}
-	}*/
-
-
-
-
 	std::cout << "\nCouldn't interpret: `" << instruction << "`";
 }
 
 
-/*
-void Interpreter::addFunction_implied( 
-		std::string fullname ,
-		instructionptr_impliedOperand insptr)
-{	
-	interpreter_function new_fun;
-	new_fun.instptr.implied = insptr;
-	new_fun.adrestype = interpreter_function::InstructionAdrestype::implied;
-	new_fun.fullname = fullname;
-	new_fun.mnemonic = GLOBAL_INSTRUCTION_DESCRIPTION_MAP.at(fullname);
+void Interpreter::interpretGivenString_parens(std::string input_string)
+{
+	history_vector.emplace_back(input_string);
 	
-	functionvector.push_back(new_fun);
+	enum Readmodes{ noread, read_inst, read_oper };
 
+	std::string instruction;
+	std::string operand;
+	int current_readmode = noread;
+
+
+	for ( char& c : input_string ) {
+		if ( c == '(' ) {
+			if ( current_readmode == noread ) { 
+				current_readmode = read_inst; 
+			} else {
+				std::cout << "\nError: unexpected `(` parenthesis while reading input. " 
+					<<" (results so far: instruction=`" << instruction
+					<< "`, operand=`" << operand
+					<< "`) I force-stop reading.";
+				return;
+			}
+		} else if ( c == ')' ) {
+			if( 
+					current_readmode == read_inst 
+					|| 
+					current_readmode == read_oper ) {
+				interpretInstruction(instruction, operand);
+			} else {
+				std::cout << "\nWarning: unexpected `)` closing parenthesis while not in reading mode. I'm ignoring it.";
+			}
+		} else if( (c == ' ') && (current_readmode == read_inst) ) { 
+			current_readmode = read_oper; 
+		} else if (current_readmode == read_inst) {
+			instruction.push_back(c);
+		} else if (current_readmode == read_oper) {
+			instruction.push_back(c);
+		}
+	}
 }
-void Interpreter::addFunction_register(
-		std::string fullname ,
-		instructionptr_register insptr)
-{	
-	interpreter_function new_fun;
-	new_fun.instptr.reg = insptr;
-	new_fun.adrestype = interpreter_function::InstructionAdrestype::reg;
-	new_fun.fullname = fullname;
-	new_fun.mnemonic = GLOBAL_INSTRUCTION_DESCRIPTION_MAP.at(fullname);
-	
-	functionvector.push_back(new_fun);
-
-} 
-void Interpreter::addFunction_value(	
-		std::string fullname, 
-		instructionptr_value insptr)
-{
-	interpreter_function new_fun;
-	new_fun.instptr.value = insptr;
-	new_fun.adrestype = interpreter_function::InstructionAdrestype::value;
-	new_fun.fullname = fullname;
-	new_fun.mnemonic = GLOBAL_INSTRUCTION_DESCRIPTION_MAP.at(fullname);
-	
-	functionvector.push_back(new_fun);
-} */
-
-
 /*
-Interpreter::Interpreter(VirtualMachine *virtualmachineptr)
-{
-	vm = virtualmachineptr;
-	
-	
-	addFunction_implied( "no-operation", &no_operation );
-	addFunction_implied( "add-with-carry", &add_with_carry   );
-	addFunction_implied( "subtract-with-carry", &subtract_with_carry ); 
-	addFunction_implied( "xor-bitwise", &xor_bitwise ); 
-	addFunction_implied( "or-bitwise", &or_bitwise ); 
-	addFunction_implied( "and-bitwise", &and_bitwise ); 
-	addFunction_implied( "not-bitwise", &not_bitwise ); 
-	//addFunction_implied( "rotate-left", &rotate_left ); 
-	//addFunction_implied( "rotate-right", &rotate_right );
-	addFunction_implied( "logical-shift-left", &logical_shift_left );
-	addFunction_implied( "logical-shift-right", &logical_shift_right );
-	addFunction_implied( "load-a-from-memory", &load_a_from_memory  );
-	addFunction_implied( "save-a-to-memory", &save_a_to_memory  );
-
-
-	addFunction_value( "load-a-with-value", &load_a_with_value );
-	
-	
-	addFunction_register("transfer-a-to-register" , &transfer_a_to_register    );
-	addFunction_register( "transfer-register-to-a" , &transfer_register_to_a    );
-	addFunction_register( "push-register", &push_register  );
-	addFunction_register( "pop-register", &pop_register  );
-	addFunction_register( "increment-register", &increment_register );
-	addFunction_register( "decrement-register", &decrement_register ); 
-	
-}*/
-
-
-/*void Interpreter::printInterpreterFunctions()
-{
-	std::cout << "\nFunctions loaded by interpreter:" << std::endl;
-	std::cout << "\nadrestype(implied: " << interpreter_function::InstructionAdrestype::implied << ", register: " << interpreter_function::InstructionAdrestype::reg << ", ";
-	std::cout << "\n|: mnemonic : fullname";
-	std::cout << "\n|:  |  : .-----' ";
-	std::cout << "\nv:  v  : v";
+	if( input_string.front() != '(' || input_string.back() != ')' ) {
+		std::cout << "\nTried to interpret unsupported string(not parentheses-enclosed.)";
+		return;
+	} else {
+		std::string instruction;
+		std::string operand;
+		int i;
+		for( i = 1; input_string.at(i) != ')'; i++) {
+			instruction.push_back ( input_string.at(i) );
+			
+			operand.push_back ( input_string.at(i) );
+		}
 		
-	std::cout << "\n\t\tIMPLIED:\n";
-	printAllFunctionsOfAdresType(interpreter_function::InstructionAdrestype::implied);
-		
-	std::cout << "\n\t\tREGISTER:\n";
-	printAllFunctionsOfAdresType(interpreter_function::InstructionAdrestype::reg);
-	
-	std::cout << "\n\t\tVALUE:\n";
-	printAllFunctionsOfAdresType(interpreter_function::InstructionAdrestype::value);
-
-} */
-
+		interpretInstruction(instruction, operand);
+	}
+*/
 

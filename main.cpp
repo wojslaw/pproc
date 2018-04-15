@@ -55,14 +55,7 @@ int main()
 
 void interpretHardCodedProgram(Interpreter ip)
 {
-	ip.interpretInstruction("ldv", "0x21");
-	ip.interpretInstruction("psh", "a");
-	ip.interpretInstruction("tat", "y");
-	ip.interpretInstruction("tat", "x");
-	ip.interpretInstruction("ldv", "0x00");
-	ip.interpretInstruction("isz", "");
-	ip.interpretInstruction("jif", "");
-	ip.interpretInstruction("shr", "");
+	ip.interpretGivenString_parens("(ldv 0x21)"); // (psh a)	(psh a)	(tat y)	(tat x)(ldv 0x00)(isz)(jif)(shr)");
 }
 
 
