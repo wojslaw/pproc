@@ -26,6 +26,7 @@ Upewnic sie, ze logical_shift jest zawsze prawidlowy(zero padding)
 #include "InstructionSetImplementation.hpp"
 #include "Execution_Interpreter.hpp"
 
+#include "typedefs.hpp"
 
 void doSomeSmallProgram(VirtualMachineState *st);
 void interpretHardCodedProgram(Interpreter ip);
@@ -33,19 +34,26 @@ void interpretHardCodedProgram(Interpreter ip);
 
 int main()
 {
+	MachineWord word;
+	word.as_byte = 0x00;
+	word.as_bits.b2 = 1;
+
+	//std::cout << "b_" << std::bitset<8>(word.as_byte) << std::endl;
 
 	VirtualMachine vm = VirtualMachine();
 	//vm.isa.printInstructionSet();
 	
+
 	Interpreter intrp = Interpreter(&vm);
 
+	intrp.readEvalPrintLoop();
 
-	interpretHardCodedProgram(intrp);
+	//interpretHardCodedProgram(intrp);
 
 
-	vm.printRegisters();
+	/*vm.printRegisters();
 	vm.printMemory(0x00, 0x00, 1);
-	vm.printMemory(0x01, 0x00, 4);
+	vm.printMemory(0x01, 0x00, 4); */
 
 	printf("\n\n");
 	return 0;
@@ -55,7 +63,7 @@ int main()
 
 void interpretHardCodedProgram(Interpreter ip)
 {
-	ip.interpretGivenString_parens("(ldv 0x21)"); // (psh a)	(psh a)	(tat y)	(tat x)(ldv 0x00)(isz)(jif)(shr)");
+	ip.interpretGivenString_parens("(ldv 0x21)(tat x)(ldv 0x37)(tat y)(psh x)(psh y)");
 }
 
 

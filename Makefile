@@ -1,4 +1,4 @@
-appname := przejproc.out
+appname := przejproc
 
 CC=clang
 CXX=clang++

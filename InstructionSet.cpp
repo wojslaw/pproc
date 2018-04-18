@@ -30,10 +30,12 @@ void InstructionSet::addInstructionToSet(
 InstructionSet::InstructionSet()
 {
 	invalid_instruction = Instruction();
+
+	number_of_instructions = 0;
+
 	int implied = Instruction::InstructionAdrestype::implied;
 	int reg = Instruction::InstructionAdrestype::reg;
 	int value = Instruction::InstructionAdrestype::value;
-
 
 	instructions_vector.reserve(0xff);
 	
@@ -78,7 +80,9 @@ InstructionSet::InstructionSet()
 	
 	
 	if ( instructions_vector.size() != number_of_instructions ) { 
-		std::cout << "\nWarning: size of instructions_vector is different from the count number_of_instructions!"; 
+		printf("\nWarning: size of instructions_vector(%x) is different from the count number_of_instructions(%x) !", 
+				instructions_vector.size() , 
+				number_of_instructions); 
 	} else {
 		//set opcodes:
 		for( size_t i = 0; i < instructions_vector.size(); i++) {

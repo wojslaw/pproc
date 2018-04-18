@@ -3,4 +3,4 @@
 clear &&
 	make &&
 	clear &&
-	./przejproc.out
+	./przejproc
