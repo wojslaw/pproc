@@ -25,6 +25,7 @@ Upewnic sie, ze logical_shift jest zawsze prawidlowy(zero padding)
 #include "VirtualMachine.hpp"
 #include "InstructionSetImplementation.hpp"
 #include "Execution_Interpreter.hpp"
+#include "Parser.hpp"
 
 #include "typedefs.hpp"
 
@@ -41,19 +42,22 @@ int main()
 	//std::cout << "b_" << std::bitset<8>(word.as_byte) << std::endl;
 
 	VirtualMachine vm = VirtualMachine();
-	//vm.isa.printInstructionSet();
+	vm.isa.printInstructionSet();
 	
+	std::string filename = "example.txt";
+	Parser parser = Parser(&vm);
+	parser.interpretParenthesisedFile(filename);
 
 	Interpreter intrp = Interpreter(&vm);
 
-	intrp.readEvalPrintLoop();
+	vm.printRegisters();
+	vm.printMemory(0x00, 0x00, 1);
+	vm.printMemory(0x01, 0x00, 4);
+	//intrp.readEvalPrintLoop();
 
 	//interpretHardCodedProgram(intrp);
 
 
-	/*vm.printRegisters();
-	vm.printMemory(0x00, 0x00, 1);
-	vm.printMemory(0x01, 0x00, 4); */
 
 	printf("\n\n");
 	return 0;

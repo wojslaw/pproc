@@ -111,8 +111,7 @@ void  and_bitwise (class VirtualMachineState *vmstate)
 void  not_bitwise (class VirtualMachineState *vmstate)
 {
 	uint8_t reg_a = vmstate->getRegisterByName('a');
-	uint8_t reg_b = vmstate->getRegisterByName('b');
-	reg_a = ~reg_b;
+	reg_a = ~reg_a;
 
 	vmstate->setRegisterByName('a', reg_a);
 	
