@@ -11,7 +11,6 @@
 
 
 
-//typedef struct InstructionSet s_instructionset ;
 
 
 struct InstructionSet {
@@ -47,46 +46,3 @@ struct InstructionSet {
 
 	// operations:
 };
-/*
-typedef void (*instructionptr_impliedOperand) (class VirtualMachineState *);
-typedef void (*instructionptr_register) (class VirtualMachineState *, char);
-typedef void (*instructionptr_value) (class VirtualMachineState *, uint8_t);
-
-
-
-
-struct interpreter_function {
-	int adrestype;
-	Instptr instptr;
-	std::string fullname;
-	std::string mnemonic;
-};
-
-class Interpreter {
-private:
-	std::vector<interpreter_function> functionvector;
-	void addFunction_implied( 
-			std::string fullname ,
-			instructionptr_impliedOperand );
-	void addFunction_register(
-			std::string fullname ,
-			instructionptr_register );
-	void addFunction_value(	
-			std::string fullname, 
-			instructionptr_value );
-
-	void evaluateFunction();
-	
-	VirtualMachineState *vmstate;
-	void printFunction(interpreter_function);
-	void printAllFunctionsOfAdresType(int adtype);
-public:
-	void printInterpreterFunctions();
-	void interpretInstruction(string instruction, string operand);
-
-	Interpreter(VirtualMachineState *);
-	// methods
-	std::vector<std::string> parseStringIntoInstructions();
-
-};
-*/

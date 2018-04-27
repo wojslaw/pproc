@@ -48,7 +48,7 @@ int main()
 	Parser parser = Parser(&vm);
 	parser.interpretParenthesisedFile(filename);
 
-	Interpreter intrp = Interpreter(&vm);
+	//Interpreter intrp = Interpreter(&vm);
 
 	vm.printRegisters();
 	vm.printMemory(0x00, 0x00, 1);

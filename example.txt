@@ -7,3 +7,6 @@
 (xor)
 (psh a)
 (psh b)
+(sva)
+(tat x)
+(jmp)
