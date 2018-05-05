@@ -39,25 +39,25 @@ int main()
 	word.as_byte = 0x00;
 	word.as_bits.b2 = 1;
 
-	//std::cout << "b_" << std::bitset<8>(word.as_byte) << std::endl;
-
 	VirtualMachine vm = VirtualMachine();
-	vm.isa.printInstructionSet();
+	Parser prs = Parser(&vm);
+
+	auto vector_of_text_instructions =	prs.splitProgramIntoTextInstructions("(ldv 0x10) xDDD (tat x) (DUPA okon) (xor xD)");
+	for( auto instr: vector_of_text_instructions ) {
+		std::cout << "\n(`" << instr.instruction << "`,`" << instr.operand << "`)";
+	}
+	std::cout << "\n";
+
+	auto vector_of_parsed_instructions = prs.parseTextInstructions(vector_of_text_instructions);
 	
-	std::string filename = "example.txt";
-	Parser parser = Parser(&vm);
-	parser.interpretParenthesisedFile(filename);
+	for( auto instr: vector_of_parsed_instructions ) {
+		std::cout << "\n(`" << instr.instruction.fullname << "`";
+		printf("`%x`)", instr.operand.value.as_byte);
+	}
 
-	//Interpreter intrp = Interpreter(&vm);
-
-	vm.printRegisters();
-	vm.printMemory(0x00, 0x00, 1);
-	vm.printMemory(0x01, 0x00, 4);
-	//intrp.readEvalPrintLoop();
-
-	//interpretHardCodedProgram(intrp);
-
-
+	std::cout << "\n";
+	  
+	
 
 	printf("\n\n");
 	return 0;
@@ -121,6 +121,5 @@ void doSomeSmallProgram(VirtualMachine vm)
 	vm.printRegisters();
 	vm.printMemory(0x01, 0x00, 6);
 	vm.printOperationRegisters();
-
 
 }

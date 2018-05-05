@@ -15,15 +15,20 @@
 #include "Execution_Interpreter.hpp"
 
 struct InstructionText {
-	std::string operation;
+	std::string instruction;
 	std::string operand;
 
-	InstructionText() { operation = std::string(); operand = std::string(); };
+	InstructionText(std::string input_instruction, std::string input_operand) {
+			instruction = input_instruction;
+			operand = input_operand;
+		};
 };
 
 struct InstructionParsed {
-	uint8_t operation;
+	struct Instruction instruction;
 	struct Operand operand;
+
+	InstructionParsed(struct Instruction input_instruction, struct Operand input_operand) { instruction = input_instruction; operand = input_operand; };
 };
 
 
@@ -40,16 +45,27 @@ private:
 	std::map<std::string, FullAdres> symbols_adres;
 	std::map<std::string, uint8_t> symbols_byte;
 
-	VirtualMachine *vmptr;
+	VirtualMachine *vm;
 public:
-	Parser(VirtualMachine *vm) {
-		vmptr = vm;
+	Parser(VirtualMachine *vmptr) {
+		vm = vmptr;
 
 		instructions_text = std::vector<struct InstructionText>() ;
 		instructions_parsed = std::vector<struct InstructionParsed>() ;
 		instructions_compiled  = std::vector<struct InstructionCompiled>();
 		symbols_adres = std::map<std::string, FullAdres>();
 	};
+
+
+
+	uint8_t parseStringIntoOperandByte(std::string text_operand, int required_adrestype);
+	std::vector<struct InstructionText> parseProgramIntoTextInstructions(std::string);
+
+   std::vector<struct InstructionText> splitProgramIntoTextInstructions(std::string);
+	
+	std::vector<struct InstructionParsed> parseTextInstructions(std::vector<struct InstructionText> );
+	
+	std::vector<struct InstructionCompiled> compileProgramToBytecode(std::vector<struct InstructionText>);
 
 
 	void interpretFile (std::string);

@@ -13,9 +13,12 @@ Interpreter::Interpreter(VirtualMachine *virtual_machine_ptr)
 
 void Interpreter::interpretInstruction(std::string instruction, std::string operand)
 {
-	const int adrt_implied = Instruction::InstructionAdrestype::implied;
-	const int adrt_reg = Instruction::InstructionAdrestype::reg;
-	const int adrt_value = Instruction::InstructionAdrestype::value;
+	//const int adrt_implied = Instruction::InstructionAdrestype::implied;
+	//const int adrt_reg = Instruction::InstructionAdrestype::reg;
+	//const int adrt_value = Instruction::InstructionAdrestype::value;
+	const int adrt_implied = InstructionAdrestype::implied;
+	const int adrt_reg = InstructionAdrestype::reg;
+	const int adrt_value = InstructionAdrestype::value;
 	
 	uint8_t val = 0 ;
 	
@@ -44,13 +47,13 @@ void Interpreter::interpretInstruction(std::string instruction, std::string oper
 	} else {
 		switch (adresing_type) {
 			case adrt_implied: 
-				(*ins.opptr.impliedAdres) (vm->getPointerToState());
+				(*ins.op_ptr.impliedAdres) (vm->getPointerToState());
 				return;
 			case adrt_reg:
-				(*ins.opptr.registerAdres) (vm->getPointerToState(), operand.at(0) );
+				(*ins.op_ptr.registerAdres) (vm->getPointerToState(), operand.at(0) );
 				return;
 			case adrt_value:
-				(*ins.opptr.valueAdres) ( vm->getPointerToState(), val );
+				(*ins.op_ptr.valueAdres) ( vm->getPointerToState(), val );
 				return;
 			default :
 				std::cout << "\nWrong adrestype???";

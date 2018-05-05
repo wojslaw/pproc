@@ -2,7 +2,7 @@ appname := przejproc
 
 CC=clang
 CXX=clang++
-CXXFLAGS := -g -std=c++11
+CXXFLAGS := -g -std=c++11 -ferror-limit=4
 
 cppsourcefiles := $(shell find . -name "*.cpp")
 cppobjectfiles := $(patsubst %.cpp, %.o, $(cppsourcefiles))

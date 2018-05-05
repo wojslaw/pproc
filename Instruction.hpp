@@ -17,7 +17,6 @@ typedef void (*operationPointer_registerAdres) (class VirtualMachineState *, cha
 typedef void (*operationPointer_valueAdres) (class VirtualMachineState *, uint8_t);
 typedef void (*operationPointer_adresAdres) (class VirtualMachineState *, uint8_t, uint8_t);
 
-enum InstructionAdrestype {implied, reg, value, adres}; 
 struct AdrestypeDescription {
 	int adrestype;
 	std::string name;
@@ -33,41 +32,49 @@ const struct AdrestypeDescription ADRESTYPE_DESCRIPTION_REG = {
 	InstructionAdrestype::reg,
 	"register" ,
 	"1 paramname of adressable register(consult implementation documentation). Either character-string or a 1byte number(in bytecode)"
-}; /*
-struct AdrestypeDescription ADRESTYPE_DESCRIPTION_VALUE = {
+}; 
+/*const struct AdrestypeDescription ADRESTYPE_DESCRIPTION_VALUE = {
 	InstructionAdrestype::value,
 	"value",
 	"1 param: 1byte hexadecimal value(from 0x00 to 0xff)"
 };
-struct AdrestypeDescription ADRESTYPE_DESCRIPTION_ADRES = {
+const struct AdrestypeDescription ADRESTYPE_DESCRIPTION_ADRES = {
 	InstructionAdrestype::adres ,
 	"adres" ,
 	"2 params: 2x 1byte hexadecimal value(from 0x00 to 0xff)"
-};*/
+	};*/
 
 typedef void operation (VirtualMachineState * vmstate);
 typedef operation (*operation_ptr);
 
+union OperationPointer {	
+	operationPointer_impliedAdres impliedAdres;
+	operationPointer_registerAdres registerAdres;
+	operationPointer_valueAdres valueAdres;
+
+	void (*voidFunctionPointer)();
+} ;
+
+
 struct Instruction {
-	
-	enum InstructionAdrestype {implied, reg, value, adres};
-
-
+	//enum InstructionAdrestype {implied, reg, value, adres};
 	uint8_t opcode;
 	std::string mnemonic;
 	std::string fullname;
-	
 	int adrestype; 
-	union OperationPointer {	
-		operationPointer_impliedAdres impliedAdres;
-		operationPointer_registerAdres registerAdres;
-		operationPointer_valueAdres valueAdres;
-		
-		void (*voidFunctionPointer)();
-	} opptr;
-	
-	operation_ptr op_ptr;
 
+	//union OperationPointer {	
+	//	operationPointer_impliedAdres impliedAdres;
+	//	operationPointer_registerAdres registerAdres;
+	//	operationPointer_valueAdres valueAdres;
+		
+	//	void (*voidFunctionPointer)();
+	//} opptr;
+	
+	OperationPointer op_ptr;
+
+
+	
 
 	// methods
 		// initializers:

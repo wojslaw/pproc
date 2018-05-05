@@ -33,9 +33,9 @@ InstructionSet::InstructionSet()
 
 	number_of_instructions = 0;
 
-	int implied = Instruction::InstructionAdrestype::implied;
-	int reg = Instruction::InstructionAdrestype::reg;
-	int value = Instruction::InstructionAdrestype::value;
+	int implied = InstructionAdrestype::implied;
+	int reg = InstructionAdrestype::reg;
+	int value = InstructionAdrestype::value;
 
 	instructions_vector.reserve(0xff);
 	

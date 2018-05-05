@@ -5,6 +5,27 @@
 
 static const uint8_t _MEMPAGE_STACK = 0x01;
 
+
+enum Adrestype {
+	adrestype_implied ,
+	adrestype_register ,
+	adrestype_value ,
+	adrestype_adres
+};
+
+enum InstructionAdrestype {
+	implied ,
+	reg ,
+	value ,
+	adres
+}; 
+
+enum OperandType {
+	type_empty ,
+	type_byte ,
+	type_char
+};
+
 union MachineWord {
 	uint8_t as_byte;
 	char as_character;
@@ -21,14 +42,12 @@ union MachineWord {
 };
 
 
+
+
 struct Operand {
-	enum OperandType {
-		type_empty ,
-		type_byte ,
-		type_char
-	};
 
 	int type;
+	uint8_t byte_value;
 	MachineWord value;
 
 	Operand() { type = type_empty; };
@@ -37,6 +56,9 @@ struct Operand {
 	void setAsChar(char input_char) { type = type_char; value.as_character = input_char; };
 };
 
+const int operandtype_empty = OperandType::type_empty;
+const int operandtype_byte = OperandType::type_byte;
+const int operandtype_char = OperandType::type_char;
 
 struct FullAdres {
 	uint8_t page;

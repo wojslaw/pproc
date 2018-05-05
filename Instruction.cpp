@@ -3,55 +3,55 @@
 
 Instruction::Instruction()
 {
-	opptr.voidFunctionPointer = nullptr;
+	op_ptr.voidFunctionPointer = nullptr;
 	adrestype = -1;
 	opcode = -1;
 	mnemonic = "XXX";
 	fullname = "INVALID-INSTRUCTION";
 
-	op_ptr = 0;
+	op_ptr.voidFunctionPointer = nullptr;
 }
 
 
 Instruction::Instruction (
 		std::string _mnemonic ,
 		std::string _fullname ,
-		operationPointer_impliedAdres op_ptr )
+		operationPointer_impliedAdres input_op_ptr )
 {
 	mnemonic = _mnemonic;
 	fullname = _fullname;
 	opcode = 0;
 
 	adrestype = InstructionAdrestype::implied;
-	opptr.impliedAdres = op_ptr;
+	op_ptr.impliedAdres = input_op_ptr;
 }
 
 
 Instruction::Instruction (
 		std::string _mnemonic ,
 		std::string _fullname ,
-		operationPointer_registerAdres op_ptr )
+		operationPointer_registerAdres input_op_ptr )
 {
 	mnemonic = _mnemonic;
 	fullname = _fullname;
 	opcode = 0;
 
 	adrestype = InstructionAdrestype::reg;
-	opptr.registerAdres = op_ptr;
+	op_ptr.registerAdres = input_op_ptr;
 }
 
 
 Instruction::Instruction (
 		std::string _mnemonic ,
 		std::string _fullname ,
-		operationPointer_valueAdres op_ptr )
+		operationPointer_valueAdres input_op_ptr )
 {
 	mnemonic = _mnemonic;
 	fullname = _fullname;
 	opcode = 0;
 
 	adrestype = InstructionAdrestype::value;
-	opptr.valueAdres = op_ptr;
+	op_ptr.valueAdres = input_op_ptr;
 }
 
 void Instruction::printInstruction()
@@ -60,5 +60,5 @@ void Instruction::printInstruction()
 	std::cout << mnemonic;
 	printf("`:`");
 	std::cout << fullname;
-	printf("`:`0x%x`adrestype (@%p)", adrestype, opptr.voidFunctionPointer);
+	printf("`:`0x%x`adrestype (@%p)", adrestype, op_ptr.voidFunctionPointer);
 }

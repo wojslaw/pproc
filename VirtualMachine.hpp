@@ -52,7 +52,7 @@ public:
 			uint8_t start_cell ,
 			uint8_t cellcount );
 
-
+	
 
 	void setRegisterByName(char, uint8_t);
 	uint8_t getRegisterByName(char);
