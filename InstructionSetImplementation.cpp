@@ -12,54 +12,54 @@ void no_operation(class VirtualMachineState *state)
 // Incrementing
 void  increment_register (
 		class VirtualMachineState * vmstate, 
-		char register_name )
+		std::string register_name )
 {
-	uint8_t regval = vmstate->getRegisterByName(register_name);
+	uint8_t regval = vmstate->getRegisterValueByName(register_name);
 	regval++;
-	vmstate->setRegisterByName(register_name, regval);
+	vmstate->setRegisterValueByName(register_name, regval);
 
 }
 
 
 void  decrement_register (
 		class VirtualMachineState *vmstate , 
-		char register_name )
+		std::string register_name )
 {
-	uint8_t regval = vmstate->getRegisterByName(register_name);
+	uint8_t regval = vmstate->getRegisterValueByName(register_name);
 	regval--;
-	vmstate->setRegisterByName(register_name, regval);
+	vmstate->setRegisterValueByName(register_name, regval);
 }
 
 
 // Stack {
 void  push_register (
 		class VirtualMachineState *vmstate ,
-		char register_name ) 
+		std::string register_name ) 
 {
 	static const uint8_t stack_page = MEMPAGE_STACK;
 	
-	uint8_t pushed_reg = vmstate->getRegisterByName (register_name);
-	uint8_t reg_s = vmstate->getRegisterByName ('s'); 
+	uint8_t pushed_reg = vmstate->getRegisterValueByName (register_name);
+	uint8_t reg_s = vmstate->getRegisterValueByName ("s"); 
 	
 	uint8_t *ptr_stktop = vmstate->accessMemoryAt (stack_page, reg_s);
 	(*ptr_stktop) = pushed_reg;
-	vmstate->setRegisterByName('s', reg_s + 1);
+	vmstate->setRegisterValueByName("s", reg_s + 1);
 }
 
 
 void  pop_register(
 		class VirtualMachineState *vmstate ,
-		char register_name )
+		std::string register_name )
 {
 	static const uint8_t stack_page = MEMPAGE_STACK;
 	
-	uint8_t reg_s = vmstate->getRegisterByName('s');
+	uint8_t reg_s = vmstate->getRegisterValueByName("s");
 	reg_s--;
 	uint8_t *ptr_stktop = vmstate->accessMemoryAt (stack_page, reg_s);
 	
 	uint8_t popped_reg = *ptr_stktop;
-	vmstate->setRegisterByName(register_name, *ptr_stktop);
-	vmstate->setRegisterByName('s', reg_s);
+	vmstate->setRegisterValueByName(register_name, *ptr_stktop);
+	vmstate->setRegisterValueByName("s", reg_s);
 }
 // } endof Stack
 
@@ -68,69 +68,69 @@ void  pop_register(
 
 void  add_with_carry (class VirtualMachineState *vmstate)
 {
-	uint8_t reg_a = vmstate->getRegisterByName('a');
-	uint8_t reg_b = vmstate->getRegisterByName('b');
+	uint8_t reg_a = vmstate->getRegisterValueByName("a");
+	uint8_t reg_b = vmstate->getRegisterValueByName("b");
 	reg_a = reg_a + reg_b;
 
-	vmstate->setRegisterByName('a', reg_a);
+	vmstate->setRegisterValueByName("a", reg_a);
 
 }
 void  subtract_with_carry (class VirtualMachineState *vmstate)
 {
-	uint8_t reg_a = vmstate->getRegisterByName('a');
-	uint8_t reg_b = vmstate->getRegisterByName('b');
+	uint8_t reg_a = vmstate->getRegisterValueByName("a");
+	uint8_t reg_b = vmstate->getRegisterValueByName("b");
 	reg_a = reg_a - reg_b;
 
-	vmstate->setRegisterByName('a', reg_a);
+	vmstate->setRegisterValueByName("a", reg_a);
 
 }
 void  xor_bitwise (class VirtualMachineState *vmstate)
 {
-	uint8_t reg_a = vmstate->getRegisterByName('a');
-	uint8_t reg_b = vmstate->getRegisterByName('b');
+	uint8_t reg_a = vmstate->getRegisterValueByName("a");
+	uint8_t reg_b = vmstate->getRegisterValueByName("b");
 	reg_a = reg_a ^ reg_b;
 
-	vmstate->setRegisterByName('a', reg_a);
+	vmstate->setRegisterValueByName("a", reg_a);
 }
 void  or_bitwise (class VirtualMachineState *vmstate)
 {
-	uint8_t reg_a = vmstate->getRegisterByName('a');
-	uint8_t reg_b = vmstate->getRegisterByName('b');
+	uint8_t reg_a = vmstate->getRegisterValueByName("a");
+	uint8_t reg_b = vmstate->getRegisterValueByName("b");
 	reg_a = reg_a | reg_b;
 
-	vmstate->setRegisterByName('a', reg_a);
+	vmstate->setRegisterValueByName("a", reg_a);
 }
 void  and_bitwise (class VirtualMachineState *vmstate)
 {
-	uint8_t reg_a = vmstate->getRegisterByName('a');
-	uint8_t reg_b = vmstate->getRegisterByName('b');
+	uint8_t reg_a = vmstate->getRegisterValueByName("a");
+	uint8_t reg_b = vmstate->getRegisterValueByName("b");
 	reg_a = reg_a & reg_b;
 
-	vmstate->setRegisterByName('a', reg_a);
+	vmstate->setRegisterValueByName("a", reg_a);
 }
 void  not_bitwise (class VirtualMachineState *vmstate)
 {
-	uint8_t reg_a = vmstate->getRegisterByName('a');
+	uint8_t reg_a = vmstate->getRegisterValueByName("a");
 	reg_a = ~reg_a;
 
-	vmstate->setRegisterByName('a', reg_a);
+	vmstate->setRegisterValueByName("a", reg_a);
 	
 }
 
 
 void  logical_shift_left (class VirtualMachineState *vmstate)
 {
-	uint8_t reg_a = vmstate->getRegisterByName('a');
+	uint8_t reg_a = vmstate->getRegisterValueByName("a");
 	reg_a = reg_a << 1;
 
-	vmstate->setRegisterByName('a', reg_a);
+	vmstate->setRegisterValueByName("a", reg_a);
 }
 void  logical_shift_right (class VirtualMachineState *vmstate)
 {
-	uint8_t reg_a = vmstate->getRegisterByName('a');
+	uint8_t reg_a = vmstate->getRegisterValueByName("a");
 	reg_a = reg_a >> 1;
 
-	vmstate->setRegisterByName('a', reg_a);
+	vmstate->setRegisterValueByName("a", reg_a);
 }
 
 
@@ -143,7 +143,7 @@ void  load_a_with_value (
 		class VirtualMachineState *vmstate, 
 		uint8_t value )
 {
-	vmstate->setRegisterByName('a', value);
+	vmstate->setRegisterValueByName("a", value);
 }
 
 
@@ -152,14 +152,14 @@ void  load_a_from_memory (class VirtualMachineState *vmstate)
 	uint8_t *memory_at_xy = vmstate->accessMemoryByXY();
 	uint8_t value = *memory_at_xy;
 
-	vmstate->setRegisterByName('a', value);
+	vmstate->setRegisterValueByName("a", value);
 }
 
 
 void  save_a_to_memory (class VirtualMachineState *vmstate)
 {
 	uint8_t *memory_at_xy = vmstate->accessMemoryByXY();
-	uint8_t value = vmstate->getRegisterByName('a');
+	uint8_t value = vmstate->getRegisterValueByName("a");
 
 	*memory_at_xy = value;
 }
@@ -169,55 +169,55 @@ void  save_a_to_memory (class VirtualMachineState *vmstate)
 // Transfers {
 void  transfer_a_to_register (
 		class VirtualMachineState * vmstate, 
-		char register_name )
+		std::string register_name )
 {
-	uint8_t reg_a = vmstate->getRegisterByName('a');
-	vmstate->setRegisterByName(register_name, reg_a);
+	uint8_t reg_a = vmstate->getRegisterValueByName("a");
+	vmstate->setRegisterValueByName(register_name, reg_a);
 }
 
 
 void  transfer_register_to_a (
 		class VirtualMachineState * vmstate, 
-		char register_name )
+		std::string register_name )
 {
-	uint8_t regval = vmstate->getRegisterByName(register_name);
-	vmstate->setRegisterByName('a', regval);
+	uint8_t regval = vmstate->getRegisterValueByName(register_name);
+	vmstate->setRegisterValueByName("a", regval);
 }
 // }
 
 // Conditions
 void is_zero (class VirtualMachineState *vmstate)
 {
-	if ( vmstate->getRegisterByName('a') == 0 ) {
-		vmstate->setRegisterByName('f', 1);
+	if ( vmstate->getRegisterValueByName("a") == 0 ) {
+		vmstate->setRegisterValueByName("f", 1);
 	} else {
-		vmstate->setRegisterByName('f', 0);
+		vmstate->setRegisterValueByName("f", 0);
 	}
 }
 void is_a_greater_than_b (class VirtualMachineState *vmstate)
 {
-	if ( vmstate->getRegisterByName('a') > vmstate->getRegisterByName('b') ) {
-		vmstate->setRegisterByName('f', 1);
+	if ( vmstate->getRegisterValueByName("a") > vmstate->getRegisterValueByName("b") ) {
+		vmstate->setRegisterValueByName("f", 1);
 	} else {
-		vmstate->setRegisterByName('f', 0);
+		vmstate->setRegisterValueByName("f", 0);
 	}
 }
 
 // Jumps
 void jump_uncoditional (class VirtualMachineState *vmstate)
 {
-	vmstate->setRegisterByName('p', vmstate->getRegisterByName('x') );
-	vmstate->setRegisterByName('c', vmstate->getRegisterByName('y') );
+	vmstate->setRegisterValueByName("p", vmstate->getRegisterValueByName("x") );
+	vmstate->setRegisterValueByName("c", vmstate->getRegisterValueByName("y") );
 }
 void jump_if(class VirtualMachineState *vmstate)
 {
-	if( vmstate->getRegisterByName('f') == 1 ) {
+	if( vmstate->getRegisterValueByName("f") == 1 ) {
 		jump_uncoditional(vmstate);
 	}
 }
 void jump_if_not(class VirtualMachineState *vmstate)
 {
-	if( vmstate->getRegisterByName('f') == 0 ) {
+	if( vmstate->getRegisterValueByName("f") == 0 ) {
 		jump_uncoditional(vmstate);
 	}
 }

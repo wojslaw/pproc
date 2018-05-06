@@ -10,7 +10,11 @@
 
 
 class Interpreter {
-private:
+	int asdf;
+	Interpreter();
+	~Interpreter();
+};
+	/*
 	std::string loadedTextToInterpret;
 	std::vector<std::string> history_vector;
 
@@ -26,14 +30,11 @@ public:
 	Interpreter(VirtualMachine *);
 
 	void interpretInstruction(std::string instruction, std::string operand);
-	void interpretGivenString_parens(std::string); /** Requires the instructions to be inside parentheses */
+	void interpretGivenString_parens(std::string); // Requires the instructions to be inside parentheses 
 	
 
 	void readEvalPrintLoop();
-
-
-	
-};
+}; */
 
 
 

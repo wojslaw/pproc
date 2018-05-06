@@ -13,9 +13,9 @@
 
 
 typedef void (*operationPointer_impliedAdres) (class VirtualMachineState *);
-typedef void (*operationPointer_registerAdres) (class VirtualMachineState *, char);
+typedef void (*operationPointer_registerAdres) (class VirtualMachineState *, std::string);
 typedef void (*operationPointer_valueAdres) (class VirtualMachineState *, uint8_t);
-typedef void (*operationPointer_adresAdres) (class VirtualMachineState *, uint8_t, uint8_t);
+//typedef void (*operationPointer_adresAdres) (class VirtualMachineState *, uint8_t, uint8_t);
 
 struct AdrestypeDescription {
 	int adrestype;

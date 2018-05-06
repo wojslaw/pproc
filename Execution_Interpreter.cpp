@@ -1,5 +1,17 @@
 #include "Execution_Interpreter.hpp"
 
+
+
+Interpreter::Interpreter()
+{
+	printf("\n\n\n INTERPRETER HAS BEEN SCRAPPED!!! \n\n\n");
+}
+Interpreter::~Interpreter()
+{
+	//dtor
+}
+
+/*
 Interpreter::Interpreter(VirtualMachine *virtual_machine_ptr)
 {
 	vm = virtual_machine_ptr;
@@ -118,7 +130,7 @@ void Interpreter::readEvalPrintLoop()
 			break;
 		} else {
 			interpretGivenString_parens(input_string);
-			vm->printRegisters();
+			//vm->state.printAdresableRegisters();
 			vm->printMemory ( display_mode.memory_page, display_mode.memory_startcell, display_mode.memory_cellcount);
 			std::cout << std::endl;
 		}
@@ -130,4 +142,4 @@ void Interpreter::readEvalPrintLoop()
 			++it ) {
 		std::cout << "\n" << *it ;
 	}
-}
+}*/

@@ -29,20 +29,15 @@ Upewnic sie, ze logical_shift jest zawsze prawidlowy(zero padding)
 
 #include "typedefs.hpp"
 
-void doSomeSmallProgram(VirtualMachineState *st);
-void interpretHardCodedProgram(Interpreter ip);
 
 
 int main()
 {
-	MachineWord word;
-	word.as_byte = 0x00;
-	word.as_bits.b2 = 1;
-
 	VirtualMachine vm = VirtualMachine();
+	vm.isa.printInstructionSet();
 	Parser prs = Parser(&vm);
 
-	auto vector_of_text_instructions =	prs.splitProgramIntoTextInstructions("(ldv 0x10) xDDD (tat x) (DUPA okon) (xor xD)");
+	auto vector_of_text_instructions =	prs.splitProgramIntoTextInstructions("(ldv 0x10) (tat x) (xor xD)");
 	for( auto instr: vector_of_text_instructions ) {
 		std::cout << "\n(`" << instr.instruction << "`,`" << instr.operand << "`)";
 	}
@@ -52,11 +47,21 @@ int main()
 	
 	for( auto instr: vector_of_parsed_instructions ) {
 		std::cout << "\n(`" << instr.instruction.fullname << "`";
-		printf("`%x`)", instr.operand.value.as_byte);
+		printf("`0x%02x`)", instr.operand);
+	}
+
+	std::cout << "\n\n\n";
+	  
+
+
+	auto vector_of_compiled_instructions = prs.compileParsedProgramToBytecode(vector_of_parsed_instructions);
+
+	for( auto instr: vector_of_compiled_instructions ) {
+		printf("(`0x%02x` `0x%02x`)\n", instr.instruction, instr.operand);
 	}
 
 	std::cout << "\n";
-	  
+
 	
 
 	printf("\n\n");
@@ -65,12 +70,40 @@ int main()
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
 void interpretHardCodedProgram(Interpreter ip)
 {
 	ip.interpretGivenString_parens("(ldv 0x21)(tat x)(ldv 0x37)(tat y)(psh x)(psh y)");
-}
+}*/
 
 
+/*
 void doSomeSmallProgram(VirtualMachine vm)
 {
 	VirtualMachineState *st = vm.getPointerToState();
@@ -122,4 +155,4 @@ void doSomeSmallProgram(VirtualMachine vm)
 	vm.printMemory(0x01, 0x00, 6);
 	vm.printOperationRegisters();
 
-}
+}*/

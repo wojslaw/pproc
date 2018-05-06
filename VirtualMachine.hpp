@@ -18,8 +18,6 @@ using std::bitset;
 #include "VirtualMachineState.hpp"
 
 
-//typedef void Operation(struct VirtualMachineState *);
-//typedef Operation (*OperationPtr);
 
 
 
@@ -39,11 +37,10 @@ public:
 	
 	std::string label;
 	VirtualMachine();
-	VirtualMachine(std::string);
+	~VirtualMachine();
 
 	VirtualMachineState* getPointerToState(void);
 
-	void doMachineCycle(void);
 
 	void printRegisters(void);
 	void printOperationRegisters(void);
@@ -64,8 +61,13 @@ public:
 	uint8_t* accessMemoryByPC(void);
 
 
+	void loadBytesIntoMemory(std::vector<uint8_t> vector_of_bytes, uint8_t startpage, uint8_t startcell);
+
+	void loadInstructionAtPC(void);
+	void executeCurrentlyLoadedInstruction(void);
+	void doMachineCycle(void);
 };
 
-void print_registers(const struct CpuRegisters *);
-void print_memory(const uint8_t *, const uint16_t first); /** prints 8 memory cells starting from given point*/
+
+
 

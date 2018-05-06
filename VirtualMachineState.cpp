@@ -31,7 +31,6 @@ void VirtualMachineState::addAdrReg(
 
 VirtualMachineState::VirtualMachineState()
 {
-	std::cout << "Called construction";
 	vector_registers_adresable = std::vector<struct Register>();
 	vector_registers_adresable.reserve(10);
 	//vector_registers_adresable.resize(10);
@@ -88,7 +87,7 @@ VirtualMachineState::VirtualMachineState()
 			"the memory cell from which the machine is reading currently");
 
 
-	register_names = std::vector<std::string>();
+	/*register_names = std::vector<std::string>();
 	register_names.reserve(8);
 	register_names.push_back("a");
 	register_names.push_back("b");
@@ -102,37 +101,34 @@ VirtualMachineState::VirtualMachineState()
 
 	for(auto regnam : register_names) {
 		regarr.addNewRegister(regnam);
-	}
+	}*/
 
-	uint8_t initial_register_value = 0;
-	std::string register_names = REGISTER_NAMES_STRING;
-	std::string internal_register_names = INTERNAL_REGISTER_NAMES_STRING;
+	//uint8_t initial_register_value = 0;
+	//std::string register_names = REGISTER_NAMES_STRING;
+	//std::string internal_register_names = INTERNAL_REGISTER_NAMES_STRING;
 
 
 
 	// The following is legacy(hopefully):
-
+	/*
 	for(char regnam : register_names) {
 		register_map[regnam] = initial_register_value;
 	}
 	
 	for(char intregnam : internal_register_names) {
 		internal_register_map[intregnam] = initial_register_value;
-	}
+	}*/
+	std::cout << "\n Created VirtualMachineState. ";
 }
 
 
 VirtualMachineState::~VirtualMachineState()
 {
+	std::cout << "\n Destroying VirtualMachineState";
 	// dtor
 }
 
 
-void VirtualMachineState::printAdresableRegisters()
-{
-	printf("\n Adresable registers:");
-	regarr.printRegisters();
-}
 
 uint8_t* VirtualMachineState::accessMemoryAt (
 		uint8_t page ,
@@ -161,17 +157,13 @@ uint8_t* VirtualMachineState::accessMemoryByPC(void)
 Register* VirtualMachineState::accessRegisterByName(std::string regnam)
 {
 	for( int i = 0; i < vector_registers_adresable.size(); i++ ) {
-		//std::cout << "\n" << regnam << " vs " << vector_registers_adresable.at(i).codename;
 		if( regnam == vector_registers_adresable.at(i).codename ) {
-			//std::cout << vector_registers_adresable.at(i).name;
-			//std::cout << "FOUND MATCH at \n";
 			printf("%p  %x", &vector_registers_adresable.at(i), vector_registers_adresable.at(i).value);
 			
 			return &vector_registers_adresable.at(i);
 		}
 	}
 	fprintf(stderr, "Warning: Tried to access a nonexistent register '%s' \n", regnam.c_str());
-	//printf("Warning: Tried to access a nonexistent register '%s' \n", regnam.c_str());
 	return 0;
 }
 
@@ -192,7 +184,7 @@ uint8_t VirtualMachineState::getRegisterValueByName(std::string regnam)
 	auto reg = accessRegisterByName(regnam);
 	if(reg == nullptr) {
 		fprintf(stderr, "Error: Couldn't get value of register '%s'", regnam.c_str() );
-		return -1;
+		return 0;
 	}
 	return reg->value;
 }
@@ -209,6 +201,7 @@ void VirtualMachineState::printRegistersDescription()
 	}
 }
 
+
 void VirtualMachineState::setRegisterByName(char regnam, uint8_t value)
 {
 	std::string rname;
@@ -216,8 +209,7 @@ void VirtualMachineState::setRegisterByName(char regnam, uint8_t value)
 	setRegisterValueByName(rname, value);
 	return;
 
-
-	register_map.at(regnam) = value;
+	//register_map.at(regnam) = value;
 }
 
 
@@ -227,22 +219,39 @@ uint8_t VirtualMachineState::getRegisterByName(char regnam)
 	rname.at(0) = regnam;
 	return getRegisterValueByName(rname);
 
-	return register_map.at(regnam);
+	//return register_map.at(regnam);
 }
 
 
-void VirtualMachineState::loadCurrentInstruction()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*void VirtualMachineState::loadCurrentInstruction()
 {
 	uint8_t instruction = *accessMemoryByPC();
 	internal_register_map.at('i') = instruction;
-}
+}*/
 
 
-void VirtualMachineState::loadCurrentOperand()
+/*void VirtualMachineState::loadCurrentOperand()
 {
 	uint8_t instruction = *accessMemoryByPC();
-	internal_register_map.at('o') = instruction;
-}
+	//internal_register_map.at('o') = instruction;
+}*/
 
 
 
@@ -250,7 +259,7 @@ void VirtualMachineState::loadCurrentOperand()
 /// I hope to remove the following:
 ///
 
-AdresableRegister::AdresableRegister(std::string register_name)
+/*AdresableRegister::AdresableRegister(std::string register_name)
 {
 	name = register_name;
 	value = 0;
@@ -302,4 +311,9 @@ void Array_AdresableRegister::printRegisters()
 		printf("$%02x  | ", i);
 		std::cout << reg[i].getName() << std::endl;
 	}
-}
+}*/
+/*void VirtualMachineState::printAdresableRegisters()
+{
+	printf("\n Adresable registers:");
+	regarr.printRegisters();
+}*/

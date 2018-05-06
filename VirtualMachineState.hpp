@@ -20,7 +20,7 @@ const uint16_t CPU_MEMORY_PAGES = 0xff;
 const uint16_t CPU_MEMORY_CELLS_ON_PAGE = 0xff;
 
 
-struct AdresableRegister {
+/*struct AdresableRegister {
 private:
 	std::string name;
 public:
@@ -33,14 +33,14 @@ public:
 struct Array_AdresableRegister {
 	struct AdresableRegister reg[0xff];
 	size_t regcount;
-	// methods
+	
+	
 	Array_AdresableRegister();
-
+	// methods
 	void addNewRegister(std::string regnam);
 	void printRegisters();
-
 	AdresableRegister* findRegisterByName(const std::string regname);
-};
+};*/
 
 struct Register {
 	std::string codename;
@@ -64,14 +64,14 @@ struct Register {
 struct VirtualMachineState {
 // State itself:
 	uint8_t mem[CPU_MEMORY_PAGES][CPU_MEMORY_CELLS_ON_PAGE];
-	Array_AdresableRegister regarr;
+	//Array_AdresableRegister regarr;
 	std::vector<struct Register> vector_registers_adresable;
 	std::vector<uint8_t> vector_registers_instruction; // instruction registers are unnamed
 // 
 	std::vector<std::string> register_names;
 
-	std::map<char, uint8_t> internal_register_map;
-	std::map<char, uint8_t> register_map;
+	//std::map<char, uint8_t> internal_register_map;
+	//std::map<char, uint8_t> register_map;
 
 	uint8_t simulator_lastread_p; // Updated on each clock cycle
 	uint8_t simulator_lastread_c;
@@ -82,23 +82,23 @@ struct VirtualMachineState {
 	~VirtualMachineState();
 
 // simulator-specific(printing and stuff
-	void printAdresableRegisters();
+	//void printAdresableRegisters();
 	void printRegistersDescription();
 
 // methods for operating on the state
 	
-	void fetchInstruction(); // Has to somehow check how many are needed. Or maybe I'll just have it load 3 bytes no mattter what
+	//void fetchInstruction(); // Has to somehow check how many are needed. Or maybe I'll just have it load 3 bytes no mattter what
 	void    setRegisterValueByName(std::string, uint8_t);
 	uint8_t getRegisterValueByName(std::string);
 
-	void loadCurrentInstruction();
-	void loadCurrentOperand();
+	//void loadCurrentInstruction();
+	//void loadCurrentOperand();
 
 	Register* accessRegisterByName(std::string regnam);
 	void setRegisterByName(char, uint8_t);
 	uint8_t getRegisterByName(char);
 
-	uint8_t* accessMemoryAt ( uint8_t page, uint8_t cell );
+	uint8_t* accessMemoryAt  (uint8_t page, uint8_t cell );
 	uint8_t* accessMemoryByXY(void);
 	uint8_t* accessMemoryByPC(void);
 

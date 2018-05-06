@@ -68,21 +68,32 @@ std::vector<struct InstructionParsed> Parser::parseTextInstructions(std::vector<
 	// 4. Add to vector
 	auto parsed_instructions = std::vector<struct InstructionParsed>();
 
-
+	std::cout << "\n\nparse Instruction: \n";
 	for( auto textinstr : instruction_text ) {
 		auto instruction = vm->isa.findInstructionByMnemonic(textinstr.instruction);
 		uint8_t operand = parseStringIntoOperandByte(textinstr.operand, instruction.adrestype);
+		printf("mnemonic = %s, operand = 0x%02x \n", instruction.mnemonic.c_str(),  operand);
+
 		parsed_instructions.emplace_back(InstructionParsed(instruction, operand));
 	}
+	std::cout << "\n";
 	return parsed_instructions;
 }
 
 
-std::vector<struct InstructionCompiled> Parser::compileProgramToBytecode(std::vector<struct InstructionText> parsed_program)
+std::vector<struct InstructionCompiled> Parser::compileParsedProgramToBytecode(std::vector<struct InstructionParsed> parsed_program)
 {
 	struct Instruction current_instruction;
 	std::vector<struct InstructionCompiled> compiled_program;
 
+	for( auto parsed_instruction : parsed_program ) {
+		compiled_program.emplace_back(
+			InstructionCompiled(
+				parsed_instruction.instruction.opcode,
+				parsed_instruction.operand
+				));
+
+	}
 
 
 	return compiled_program;
@@ -92,6 +103,8 @@ std::vector<struct InstructionCompiled> Parser::compileProgramToBytecode(std::ve
 
 void Parser::interpretParenthesisedFile(std::string filename)
 {
+	std::cout <<  "\n\n Parser::interpretParenthesisedFile doesn't work!";
+	/*
 	FILE *file = fopen(filename.c_str(), "r");
 	
 	std::string file_content;
@@ -108,5 +121,5 @@ void Parser::interpretParenthesisedFile(std::string filename)
 	Interpreter interpreter = Interpreter(vm);
 	interpreter.interpretGivenString_parens(file_content);
 
-	fclose(file);
+	fclose(file); */
 }

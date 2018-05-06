@@ -3,15 +3,12 @@
 
 VirtualMachine::VirtualMachine()
 {
-	state = VirtualMachineState();
-	isa = InstructionSet();
+	//ctor
 }
-
-VirtualMachine::VirtualMachine(std::string vmlabel)
+VirtualMachine::~VirtualMachine()
 {
-	label = vmlabel;
-}
 
+}
 VirtualMachineState* VirtualMachine::getPointerToState()
 {
 	return &(state);
@@ -20,15 +17,15 @@ VirtualMachineState* VirtualMachine::getPointerToState()
 
 void VirtualMachine::incrementPC()
 {
-	uint8_t reg_p = state.getRegisterByName('p');
-	uint8_t reg_c = state.getRegisterByName('c');
+	uint8_t reg_p = state.getRegisterValueByName("p");
+	uint8_t reg_c = state.getRegisterValueByName("c");
 	
 	reg_c++;
 	if(reg_c == 0) { reg_p++; }
 	
 
-	state.setRegisterByName('p', reg_p);
-	state.setRegisterByName('c', reg_c);
+	state.setRegisterValueByName("p", reg_p);
+	state.setRegisterValueByName("c", reg_c);
 }
 
 
@@ -41,43 +38,6 @@ Instruction VirtualMachine::findInstructionByMnemonic(std::string mnemonic)
 	}
 	std::cout << "\nCouldn't find any instruction matching mnemonic `" << mnemonic << "`";
 	return Instruction();
-}
-
-
-void VirtualMachine::evaluateLoadedOperation()
-{
-	const uint8_t instruction_code = state.internal_register_map.at('i');
-	const uint8_t operand_code = state.internal_register_map.at('o');
-
-
-
-	printf("\n Warning: virtual machine has called evaluateLoadedOperation(%02x %02x). Evaluation isn't implemented!.", instruction_code, operand_code);
-	// TODO
-}
-
-
-void VirtualMachine::doMachineCycle(void)
-{
-	state.simulator_lastread_p = state.register_map.at('p');
-	state.simulator_lastread_c = state.register_map.at('c');
-
-	state.loadCurrentInstruction();
-	incrementPC();
-	state.loadCurrentOperand();
-	incrementPC();
-
-	evaluateLoadedOperation();
-}
-
-
-void VirtualMachine::printRegisters(void)
-{
-	printf("\nRegisters:");
-	for(char regname : REGISTER_NAMES_STRING) {
-		uint8_t value = state.register_map.at(regname);
-		printf("\n %c = $%02x  (%c)    b_", regname, value, value);
-		cout << bitset<8>(value); 
-	}
 }
 
 
@@ -95,19 +55,6 @@ void VirtualMachine::printMemory(
 }
 
 
-void VirtualMachine::printOperationRegisters(void)
-{
-	uint8_t reg_p = state.register_map.at('p');
-	uint8_t reg_c = state.register_map.at('c');
-	uint8_t instruction = state.internal_register_map.at('i');
-	uint8_t operand = state.internal_register_map.at('o');
-
-	printf("\n oper at $%02x%02x: $%02x %02x ", 
-				state.simulator_lastread_p , 
-				state.simulator_lastread_c , 
-				instruction ,
-				operand );
-}
 
 
 uint8_t* VirtualMachine::accessMemoryAt (
@@ -120,20 +67,69 @@ uint8_t* VirtualMachine::accessMemoryAt (
 
 uint8_t* VirtualMachine::accessMemoryByXY (void) 
 {
-	uint8_t page = getRegisterByName('x');
-	uint8_t cell = getRegisterByName('y');
+	uint8_t page = state.getRegisterValueByName("x");
+	uint8_t cell = state.getRegisterValueByName("y");
 	return accessMemoryAt(page, cell);
 }
 
 
 uint8_t* VirtualMachine::accessMemoryByPC(void)
 {
-	uint8_t page = getRegisterByName('p');
-	uint8_t cell = getRegisterByName('c');
+	uint8_t page = state.getRegisterValueByName("p");
+	uint8_t cell = state.getRegisterValueByName("c");
 	return accessMemoryAt(page, cell);
 }
 
 
+void VirtualMachine::loadBytesIntoMemory(std::vector<uint8_t> vector_of_bytes, uint8_t startpage, uint8_t startcell)
+{
+	state.setRegisterValueByName("p", startpage);
+	state.setRegisterValueByName("c", startcell);
+	for(uint8_t current_byte : vector_of_bytes ) {
+		*accessMemoryByPC() = current_byte;
+		incrementPC();
+	}
+}
+
+
+void VirtualMachine::doMachineCycle(void)
+{
+	std::cout << "\nMACHINE CYCLE UNIMPLEMENTED!!!!!";
+	incrementPC();
+	incrementPC();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
 void VirtualMachine::setRegisterByName(char regnam, uint8_t value)
 {
 	state.register_map.at(regnam) = value;
@@ -144,6 +140,35 @@ uint8_t VirtualMachine::getRegisterByName(char regnam)
 {
 	return state.register_map.at(regnam);
 }
+*/
 
+/*void VirtualMachine::printOperationRegisters(void)
+{
+	uint8_t reg_p = state.register_map.at('p');
+	uint8_t reg_c = state.register_map.at('c');
+	uint8_t instruction = state.internal_register_map.at('i');
+	uint8_t operand = state.internal_register_map.at('o');
 
+	printf("\n oper at $%02x%02x: $%02x %02x ", 
+				state.simulator_lastread_p , 
+				state.simulator_lastread_c , 
+				instruction ,
+				operand );
+}*/
+/*void VirtualMachine::printRegisters(void)
+{
+	printf("\nRegisters:");
+	for(char regname : REGISTER_NAMES_STRING) {
+		uint8_t value = state.register_map.at(regname);
+		printf("\n %c = $%02x  (%c)    b_", regname, value, value);
+		cout << bitset<8>(value); 
+	}
+}*/
 
+/*void VirtualMachine::evaluateLoadedOperation()
+{
+	const uint8_t instruction_code = state.internal_register_map.at('i');
+	const uint8_t operand_code = state.internal_register_map.at('o');
+	printf("\n Warning: virtual machine has called evaluateLoadedOperation(%02x %02x). Evaluation isn't implemented!.", instruction_code, operand_code);
+	// TODO
+}*/
