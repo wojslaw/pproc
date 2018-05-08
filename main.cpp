@@ -55,14 +55,21 @@ int main()
 
 
 	auto vector_of_compiled_instructions = prs.compileParsedProgramToBytecode(vector_of_parsed_instructions);
+	auto vector_of_bytes = std::vector<uint8_t>();
 
 	for( auto instr: vector_of_compiled_instructions ) {
-		printf("(`0x%02x` `0x%02x`)\n", instr.instruction, instr.operand);
+		printf("pushing (`0x%02x` `0x%02x`)\n", instr.instruction, instr.operand);
+		vector_of_bytes.emplace_back(instr.instruction);
+		vector_of_bytes.emplace_back(instr.operand);
 	}
 
-	std::cout << "\n";
-
 	
+	vm.state.loadSequenceOfBytesIntoMemory(vector_of_bytes, 0x06, 0xfe);
+	printf("\n\n@0x06ff = 0x%02x\n\n", *vm.state.accessMemoryAt(0x06, 0xff));
+	std::cout << "Registers: \n";
+	vm.state.printAdresableRegisters();
+	std::cout << "Memory: \n";
+	vm.state.printMemory(0x06, 0xfc, 0x16);
 
 	printf("\n\n");
 	return 0;

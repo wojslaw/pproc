@@ -13,7 +13,7 @@ enum Adrestype {
 	adrestype_adres
 };
 
-enum InstructionAdrestype {
+/*enum InstructionAdrestype {
 	implied ,
 	reg ,
 	value ,
@@ -24,7 +24,7 @@ enum OperandType {
 	type_empty ,
 	type_byte ,
 	type_char
-};
+};*/
 
 union MachineWord {
 	uint8_t as_byte;
@@ -44,27 +44,41 @@ union MachineWord {
 
 
 
-struct Operand {
-
-	int type;
-	uint8_t byte_value;
-	MachineWord value;
-
-	Operand() { type = type_empty; };
-	void setAsEmpty(void) { type = type_empty; };
-	void setAsByte(uint8_t input_byte) { type = type_byte; value.as_byte = input_byte; } ;
-	void setAsChar(char input_char) { type = type_char; value.as_character = input_char; };
-};
-
-const int operandtype_empty = OperandType::type_empty;
-const int operandtype_byte = OperandType::type_byte;
-const int operandtype_char = OperandType::type_char;
-
 struct FullAdres {
 	uint8_t page;
 	uint8_t cell;
 
 	void setAdres(uint8_t p, uint8_t c) { page = p; cell = c; };
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*struct Operand {
+
+	int type;
+	uint8_t byte_value;
+	MachineWord value;
+
+	Operand() { type = adrestype_implied; };
+	void setAsEmpty(void) { type = adrestype_implied; };
+	void setAsByte(uint8_t input_byte) { type = adrestype_value; value.as_byte = input_byte; } ;
+	void setAsCharacter(char input_register) { type = adrestype_register; value.as_character = input_char; };
+};*/
+
+/*const int operandtype_empty = OperandType::type_empty;
+const int operandtype_byte = OperandType::type_byte;
+const int operandtype_char = OperandType::type_char;*/
+
+
 
 

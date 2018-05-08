@@ -222,4 +222,10 @@ void jump_if_not(class VirtualMachineState *vmstate)
 	}
 }
 
-// */
+
+
+
+void instruction_increment_register(class VirtualMachineState *vmstate_ptr, uint8_t register_bytecode)
+{
+	
+}

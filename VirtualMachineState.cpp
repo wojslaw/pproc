@@ -32,9 +32,12 @@ void VirtualMachineState::addAdrReg(
 VirtualMachineState::VirtualMachineState()
 {
 	vector_registers_adresable = std::vector<struct Register>();
-	vector_registers_adresable.reserve(10);
-	//vector_registers_adresable.resize(10);
-
+	vector_registers_adresable.reserve(0x08);
+	
+	vector_registers_instruction = std::vector<uint8_t>();
+	vector_registers_instruction.reserve(CPU_NUMBER_OF_INSTRUCTION_REGISTERS);
+	vector_registers_instruction.resize(CPU_NUMBER_OF_INSTRUCTION_REGISTERS);
+	//vector_registers_instruction = std::vector<uint8_t>();
 	
 	
 	addAdrReg(
@@ -47,7 +50,7 @@ VirtualMachineState::VirtualMachineState()
 			"b", 
 			0x01,
 			"b-acumulator", 
-			"secondary acumulator,  default");
+			"secondary acumulator, by default it is used as the second parameter for binary operators(`xor`, `and`, `add`, etc.)");
 	
 	addAdrReg(
 			"s",
@@ -128,8 +131,6 @@ VirtualMachineState::~VirtualMachineState()
 	// dtor
 }
 
-
-
 uint8_t* VirtualMachineState::accessMemoryAt (
 		uint8_t page ,
 		uint8_t cell )
@@ -137,19 +138,32 @@ uint8_t* VirtualMachineState::accessMemoryAt (
 	return &(mem[page][cell]);
 }
 
-
-uint8_t* VirtualMachineState::accessMemoryByXY (void) 
+uint8_t VirtualMachineState::getMemoryValueAt(
+		uint8_t page,
+		uint8_t cell )
 {
-	uint8_t page = getRegisterByName('x');
-	uint8_t cell = getRegisterByName('y');
-	return accessMemoryAt(page, cell);
+	return mem[page][cell];
+}
+void VirtualMachineState::setMemoryValueAt(
+		uint8_t page,
+		uint8_t cell, 
+		uint8_t value)
+{
+	mem[page][cell] = value;
 }
 
 
+
+uint8_t* VirtualMachineState::accessMemoryByXY (void) 
+{
+	uint8_t page = getRegisterValueByName("x");
+	uint8_t cell = getRegisterValueByName("y");
+	return accessMemoryAt(page, cell);
+}
 uint8_t* VirtualMachineState::accessMemoryByPC(void)
 {
-	uint8_t page = getRegisterByName('p');
-	uint8_t cell = getRegisterByName('c');
+	uint8_t page = getRegisterValueByName("p");
+	uint8_t cell = getRegisterValueByName("c");
 	return accessMemoryAt(page, cell);
 }
 
@@ -158,8 +172,6 @@ Register* VirtualMachineState::accessRegisterByName(std::string regnam)
 {
 	for( int i = 0; i < vector_registers_adresable.size(); i++ ) {
 		if( regnam == vector_registers_adresable.at(i).codename ) {
-			printf("%p  %x", &vector_registers_adresable.at(i), vector_registers_adresable.at(i).value);
-			
 			return &vector_registers_adresable.at(i);
 		}
 	}
@@ -222,17 +234,120 @@ uint8_t VirtualMachineState::getRegisterByName(char regnam)
 	//return register_map.at(regnam);
 }
 
+void VirtualMachineState::incrementPC()
+{
+	uint8_t page = getRegisterValueByName("p");
+	uint8_t cell = getRegisterValueByName("c");
+	
+	cell++;
+	if(cell == 0) { 
+		page++; 
+	}
+	
+	setRegisterValueByName("p", page);
+	setRegisterValueByName("c", cell);
+	
+}
+
+
+void VirtualMachineState::incrementPC_times(int times)
+{
+	for(int i = 0; i < times; i++) {
+		incrementPC();
+	}
+}
+
+void VirtualMachineState::loadSequenceOfBytesIntoMemory(
+		std::vector<uint8_t> vector_of_bytes
+		, uint8_t startpage 
+		, uint8_t startcell 
+) {
+	uint8_t page = startpage;
+	uint8_t cell = startcell;
+	for( auto current_byte : vector_of_bytes ) {
+		printf("Loading 0x%02x to @0x%02x%02x", current_byte, page, cell);
+		setMemoryValueAt(page, cell, current_byte);
+		printf("   Now is 0x%02x \n", getMemoryValueAt(page, cell));
+		
+		cell++;
+		if(cell == 0) { 
+			++page; 
+			printf("Swapped page, now at @0x%02x.%02x", page, cell);
+		}
+	}
+}
 
 
 
 
 
+void VirtualMachineState::printMemory(
+		uint8_t startpage, 
+		uint8_t startcell, 
+		uint8_t number_of_cells)
+{
+	uint8_t page = startpage;
+	uint8_t cell = startcell;
+
+	for(uint8_t i = 0; i < number_of_cells; ++i) {
+		printf(" @0x%02x%02x: 0x%02x", page, cell, *accessMemoryAt(page, cell) );
+		cell++;
+		if(cell == 0) { 
+			++page; 
+			printf("    Swapped page, now at @0x%02x.%02x", page, cell);
+		}
+		putchar('\n');
+	}
+	
+}
+
+void VirtualMachineState::printAdresableRegisters(void)
+{
+	printf("\nAdresable registers:\n");
+	for( auto reg : vector_registers_adresable ) {
+		printf(" reg `%s`(0x%02x)  = 0x%02x \n", 
+				reg.codename.c_str(),
+				reg.numeric_code,
+				reg.value);
+	}
+}
 
 
 
+void VirtualMachineState::fetchCurrentInstruction(void)
+{
+	uint8_t page = getRegisterValueByName("p");
+	uint8_t cell = getRegisterValueByName("c");
+
+	for(size_t i = 0; i < vector_registers_instruction.size(); ++i ) {
+		vector_registers_instruction.at(i) = getMemoryValueAt(page, cell);
+
+		++cell;
+		if(cell == 0) {
+			++page;
+		}
+	}
+}
 
 
+int VirtualMachineState::evaluateCurrentInstruction()
+{
+	//struct Instruction instruction = instruction_set->findInstructionByBytecode(vector_registers_instruction);	
+	
+	//instruction		
 
+
+	return 2;
+}
+
+
+void VirtualMachineState::doMachineCycle(void)
+{
+	std::cout << "\ndoMachineCycle Not done yet";
+	fetchCurrentInstruction();
+	int bytes_forwards = evaluateCurrentInstruction();
+	incrementPC_times(bytes_forwards);
+}
 
 
 

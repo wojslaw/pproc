@@ -24,12 +24,12 @@ struct AdrestypeDescription {
 }; 
 
 const struct AdrestypeDescription ADRESTYPE_DESCRIPTION_IMPLIED = { 
-	InstructionAdrestype::implied,
+	adrestype_implied,
 	"implied" ,
 	"Doesn't accept parameters"
 };
 const struct AdrestypeDescription ADRESTYPE_DESCRIPTION_REG = {
-	InstructionAdrestype::reg,
+	adrestype_register,
 	"register" ,
 	"1 paramname of adressable register(consult implementation documentation). Either character-string or a 1byte number(in bytecode)"
 }; 

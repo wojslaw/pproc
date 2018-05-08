@@ -22,7 +22,7 @@ Instruction::Instruction (
 	fullname = _fullname;
 	opcode = 0;
 
-	adrestype = InstructionAdrestype::implied;
+	adrestype = adrestype_implied;
 	op_ptr.impliedAdres = input_op_ptr;
 }
 
@@ -36,7 +36,7 @@ Instruction::Instruction (
 	fullname = _fullname;
 	opcode = 0;
 
-	adrestype = InstructionAdrestype::reg;
+	adrestype = adrestype_register;
 	op_ptr.registerAdres = input_op_ptr;
 }
 
@@ -50,7 +50,7 @@ Instruction::Instruction (
 	fullname = _fullname;
 	opcode = 0;
 
-	adrestype = InstructionAdrestype::value;
+	adrestype = adrestype_value;
 	op_ptr.valueAdres = input_op_ptr;
 }
 

@@ -43,19 +43,19 @@ std::vector<struct InstructionText> Parser::splitProgramIntoTextInstructions(std
 
 uint8_t Parser::parseStringIntoOperandByte(std::string text_operand, int required_adrestype)
 {
-	if ( required_adrestype == InstructionAdrestype::implied ) {
-		return -1;
-	} else if( required_adrestype == InstructionAdrestype::value ) {
+	if ( required_adrestype == adrestype_implied ) {
+		return 0;
+	} else if( required_adrestype == adrestype_value ) {
 		try {
 			uint8_t value = std::stoi(text_operand);
+			return value;
 		} catch (std::invalid_argument) {
 			fprintf(stderr, "\nWarning: received invalid string \"%s\" when trying to convert into integer.\n", text_operand.c_str());
-			return -1;
+			return 0;
 		}
-		return value;
 	}
 
-	return -1;
+	return 0;
 }
 
 

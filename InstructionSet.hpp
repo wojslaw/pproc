@@ -18,7 +18,6 @@ struct InstructionSet {
 	struct Instruction invalid_instruction;
 	
 	uint8_t number_of_instructions;
-	//std::vector<struct Instruction> ins_vector;
 	
 	// ctor/init
 	InstructionSet();
@@ -42,6 +41,7 @@ struct InstructionSet {
 	void printInstructionSet(void);
 
 	struct Instruction findInstructionByMnemonic(std::string);
+	struct Instruction findInstructionByBytecode(uint8_t);
 
 
 	// operations:
