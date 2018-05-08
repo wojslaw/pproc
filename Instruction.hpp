@@ -63,13 +63,7 @@ struct Instruction {
 	std::string fullname;
 	int adrestype; 
 
-	//union OperationPointer {	
-	//	operationPointer_impliedAdres impliedAdres;
-	//	operationPointer_registerAdres registerAdres;
-	//	operationPointer_valueAdres valueAdres;
-		
-	//	void (*voidFunctionPointer)();
-	//} opptr;
+
 	
 	OperationPointer op_ptr;
 
