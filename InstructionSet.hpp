@@ -36,7 +36,7 @@ struct InstructionSet {
 			std::string mnemonic, 
 			std::string fullname, 
 			operationPointer_valueAdres op_ptr );
-		
+
 		// other
 	void printInstructionSet(void);
 

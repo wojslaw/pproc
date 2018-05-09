@@ -61,12 +61,10 @@ struct VirtualMachineState {
 	void printRegistersDescription();
 
 // methods for operating on the state
-	
-	//void fetchInstruction(); // Has to somehow check how many are needed. Or maybe I'll just have it load 3 bytes no mattter what
 	void    setRegisterValueByName(std::string, uint8_t);
 	uint8_t getRegisterValueByName(std::string);
 	void    setRegisterValueByBytecode(uint8_t, uint8_t);
-	uint8_t getRegisterValueByName(uint8_t);
+	uint8_t getRegisterValueByBytecode(uint8_t);
 
 	//void loadCurrentInstruction();
 	//void loadCurrentOperand();

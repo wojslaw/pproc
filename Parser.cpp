@@ -47,7 +47,8 @@ uint8_t Parser::parseStringIntoOperandByte(std::string text_operand, int require
 		return 0;
 	} else if( required_adrestype == adrestype_value ) {
 		try {
-			uint8_t value = std::stoi(text_operand);
+			size_t number_of_characters;
+			uint8_t value = std::stoi(text_operand, &number_of_characters, 0);
 			return value;
 		} catch (std::invalid_argument) {
 			fprintf(stderr, "\nWarning: received invalid string \"%s\" when trying to convert into integer.\n", text_operand.c_str());
@@ -68,11 +69,11 @@ std::vector<struct InstructionParsed> Parser::parseTextInstructions(std::vector<
 	// 4. Add to vector
 	auto parsed_instructions = std::vector<struct InstructionParsed>();
 
-	std::cout << "\n\nparse Instruction: \n";
+	//std::cout << "\n\nparse Instruction: \n";
 	for( auto textinstr : instruction_text ) {
 		auto instruction = vm->isa.findInstructionByMnemonic(textinstr.instruction);
 		uint8_t operand = parseStringIntoOperandByte(textinstr.operand, instruction.adrestype);
-		printf("mnemonic = %s, operand = 0x%02x \n", instruction.mnemonic.c_str(),  operand);
+		//printf("mnemonic = %s, operand = 0x%02x \n", instruction.mnemonic.c_str(),  operand);
 
 		parsed_instructions.emplace_back(InstructionParsed(instruction, operand));
 	}

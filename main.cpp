@@ -24,7 +24,6 @@ Upewnic sie, ze logical_shift jest zawsze prawidlowy(zero padding)
 #include "Instruction.hpp"
 #include "VirtualMachine.hpp"
 #include "InstructionSetImplementation.hpp"
-#include "Execution_Interpreter.hpp"
 #include "Parser.hpp"
 
 #include "typedefs.hpp"
@@ -37,7 +36,7 @@ int main()
 	vm.isa.printInstructionSet();
 	Parser prs = Parser(&vm);
 
-	auto vector_of_text_instructions =	prs.splitProgramIntoTextInstructions("(ldv 0x10) (tat x) (xor xD)");
+	auto vector_of_text_instructions =	prs.splitProgramIntoTextInstructions("(ldv 0x10) (tat x)  (psh-reg 0x00)");
 	for( auto instr: vector_of_text_instructions ) {
 		std::cout << "\n(`" << instr.instruction << "`,`" << instr.operand << "`)";
 	}
@@ -64,12 +63,12 @@ int main()
 	}
 
 	
-	vm.state.loadSequenceOfBytesIntoMemory(vector_of_bytes, 0x06, 0xfe);
-	printf("\n\n@0x06ff = 0x%02x\n\n", *vm.state.accessMemoryAt(0x06, 0xff));
+	vm.state.loadSequenceOfBytesIntoMemory(vector_of_bytes, 0x07, 0x00);
+	printf("\n\n@0x06ff = 0x%02x\n\n", vm.state.getMemoryValueAt(0x07, 0x00));
 	std::cout << "Registers: \n";
 	vm.state.printAdresableRegisters();
 	std::cout << "Memory: \n";
-	vm.state.printMemory(0x06, 0xfc, 0x16);
+	vm.state.printMemory(0x07, 0x00, 0x16);
 
 	printf("\n\n");
 	return 0;

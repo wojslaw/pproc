@@ -54,6 +54,7 @@ Instruction::Instruction (
 	op_ptr.valueAdres = input_op_ptr;
 }
 
+
 void Instruction::printInstruction()
 {
 	printf("`0x%02x`:`", opcode);

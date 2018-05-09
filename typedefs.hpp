@@ -10,7 +10,9 @@ enum Adrestype {
 	adrestype_implied ,
 	adrestype_register ,
 	adrestype_value ,
-	adrestype_adres
+	adrestype_adres ,
+	adrestype_registerBytecode ,
+	adrestype_zeropage
 };
 
 /*enum InstructionAdrestype {

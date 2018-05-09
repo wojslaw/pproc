@@ -51,24 +51,20 @@ union OperationPointer {
 	operationPointer_impliedAdres impliedAdres;
 	operationPointer_registerAdres registerAdres;
 	operationPointer_valueAdres valueAdres;
+	
 
 	void (*voidFunctionPointer)();
-} ;
+};
 
 
 struct Instruction {
-	//enum InstructionAdrestype {implied, reg, value, adres};
 	uint8_t opcode;
 	std::string mnemonic;
 	std::string fullname;
-	int adrestype; 
+	int adrestype;
 
-
-	
 	OperationPointer op_ptr;
 
-
-	
 
 	// methods
 		// initializers:

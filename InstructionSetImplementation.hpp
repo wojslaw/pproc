@@ -49,3 +49,14 @@ void jump_uncoditional (class VirtualMachineState *);
 void jump_if(class VirtualMachineState *);
 void jump_if_not(class VirtualMachineState *);
 
+
+void instruction_increment_register(class VirtualMachineState *, uint8_t );
+void instruction_decrement_register(class VirtualMachineState *, uint8_t );
+
+void  instruction_push_register (
+		class VirtualMachineState *,
+		uint8_t );
+
+void  instruction_pop_register (
+		class VirtualMachineState * ,
+		uint8_t );

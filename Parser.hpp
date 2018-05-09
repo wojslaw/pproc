@@ -12,7 +12,6 @@
 #include "typedefs.hpp"
 
 #include "VirtualMachine.hpp"
-#include "Execution_Interpreter.hpp"
 
 struct InstructionText {
 	std::string instruction;

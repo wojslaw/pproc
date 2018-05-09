@@ -201,7 +201,21 @@ uint8_t VirtualMachineState::getRegisterByName(char regnam)
 	return getRegisterValueByName(rname);
 
 	//return register_map.at(regnam);
+}	
+
+
+void VirtualMachineState::setRegisterValueByBytecode (
+		uint8_t register_bytecode, 
+		uint8_t value)
+{
+	vector_registers_adresable.at(register_bytecode).value = value;
 }
+uint8_t VirtualMachineState::getRegisterValueByBytecode(uint8_t register_bytecode)
+{
+	return vector_registers_adresable.at(register_bytecode).value;
+}
+
+
 
 void VirtualMachineState::incrementPC()
 {
@@ -215,7 +229,6 @@ void VirtualMachineState::incrementPC()
 	
 	setRegisterValueByName("p", page);
 	setRegisterValueByName("c", cell);
-	
 }
 
 
@@ -234,14 +247,14 @@ void VirtualMachineState::loadSequenceOfBytesIntoMemory(
 	uint8_t page = startpage;
 	uint8_t cell = startcell;
 	for( auto current_byte : vector_of_bytes ) {
-		printf("Loading 0x%02x to @0x%02x%02x", current_byte, page, cell);
+		//printf("Loading 0x%02x to @0x%02x%02x", current_byte, page, cell);
 		setMemoryValueAt(page, cell, current_byte);
-		printf("   Now is 0x%02x \n", getMemoryValueAt(page, cell));
+		//printf("   Now is 0x%02x \n", getMemoryValueAt(page, cell));
 		
 		cell++;
 		if(cell == 0) { 
 			++page; 
-			printf("Swapped page, now at @0x%02x.%02x", page, cell);
+			//printf("Swapped page, now at @0x%02x.%02x", page, cell);
 		}
 	}
 }
@@ -263,7 +276,7 @@ void VirtualMachineState::printMemory(
 		cell++;
 		if(cell == 0) { 
 			++page; 
-			printf("    Swapped page, now at @0x%02x.%02x", page, cell);
+			//printf("    Swapped page, now at @0x%02x.%02x", page, cell);
 		}
 		putchar('\n');
 	}

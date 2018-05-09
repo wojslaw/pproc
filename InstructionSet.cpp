@@ -7,7 +7,7 @@ void InstructionSet::addInstructionToSet(
 		std::string fullname, 
 		operationPointer_impliedAdres op_ptr )
 {
-	instructions_vector.push_back( Instruction(mnemonic, fullname, op_ptr) );
+	instructions_vector.emplace_back( Instruction(mnemonic, fullname, op_ptr) );
 	number_of_instructions++;
 }
 void InstructionSet::addInstructionToSet(
@@ -15,7 +15,7 @@ void InstructionSet::addInstructionToSet(
 		std::string fullname, 
 		operationPointer_registerAdres op_ptr )
 {
-	instructions_vector.push_back( Instruction(mnemonic, fullname, op_ptr) );
+	instructions_vector.emplace_back( Instruction(mnemonic, fullname, op_ptr) );
 	number_of_instructions++;
 }
 void InstructionSet::addInstructionToSet(
@@ -23,9 +23,11 @@ void InstructionSet::addInstructionToSet(
 		std::string fullname, 
 		operationPointer_valueAdres op_ptr )
 {
-	instructions_vector.push_back( Instruction(mnemonic, fullname, op_ptr) );
+	instructions_vector.emplace_back( Instruction(mnemonic, fullname, op_ptr) );
 	number_of_instructions++;
 }
+
+
 
 InstructionSet::InstructionSet()
 {
@@ -78,6 +80,15 @@ InstructionSet::InstructionSet()
 	addInstructionToSet("jif", "jump-if", &jump_if);
 	addInstructionToSet("jin", "jump-if-not", &jump_if_not);
 	
+
+
+	addInstructionToSet("inc-reg", "increment-register-bytecode", &instruction_increment_register);
+	addInstructionToSet("dec-reg", "decrement-register-bytecode", &instruction_decrement_register);
+	addInstructionToSet("psh-reg", "push-register-onto-stack-bytecode", &instruction_push_register);
+	addInstructionToSet("pop-reg", "pop-stack-to-register-bytecode", &instruction_pop_register);
+
+
+
 	
 	if ( instructions_vector.size() != number_of_instructions ) { 
 		printf("\nWarning: size of instructions_vector(%x) is different from the count number_of_instructions(%x) !", 
