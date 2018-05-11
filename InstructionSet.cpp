@@ -35,12 +35,13 @@ InstructionSet::InstructionSet()
 
 	number_of_instructions = 0;
 
-	//int implied = InstructionAdrestype::implied;
-	//int reg = InstructionAdrestype::reg;
-	//int value = InstructionAdrestype::value;
-
 	instructions_vector.reserve(0xff);
 	
+
+	//addInstructionToSet("nop", "no-operation", &cpu_instruction::no_operation);
+
+	//addInstructionToSet("inc", "increment-register", &cpu_instruction::increment_register);
+
 	addInstructionToSet("nop", "no-operation", &no_operation );
 
 	addInstructionToSet("inc", "increment-register", &increment_register);
@@ -91,9 +92,9 @@ InstructionSet::InstructionSet()
 
 	
 	if ( instructions_vector.size() != number_of_instructions ) { 
-		printf("\nWarning: size of instructions_vector(%x) is different from the count number_of_instructions(%x) !", 
-				instructions_vector.size() , 
-				number_of_instructions); 
+		fprintf(stderr, "\nWarning: size of instructions_vector(%x) is different from the count number_of_instructions(0x%02x)!!! This shouldn't happen, like, ever!!!", 
+				(unsigned int)instructions_vector.size() , 
+				number_of_instructions ); 
 	} else {
 		//set opcodes:
 		for( size_t i = 0; i < instructions_vector.size(); i++) {

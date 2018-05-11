@@ -2,12 +2,161 @@
 
 
 
+/*
+void no_operation(class VirtualMachineState *vmstate_ptr);
+
+
+void increment_register(class VirtualMachineState *vmstate_ptr, uint8_t register_bytecode);
+void decrement_register(class VirtualMachineState *vmstate_ptr, uint8_t register_bytecode);
+	
+	
+// ALU
+void add_alu (class VirtualMachineState *vmstate_ptr);
+void subtract_alu (class VirtualMachineState *vmstate_ptr);
+void xor_bitwise_alu (class VirtualMachineState *vmstate_ptr);
+void or_bitwise_alu  (class VirtualMachineState *vmstate_ptr);
+void and_bitwise_alu (class VirtualMachineState *vmstate_ptr);
+void not_bitwise_alu (class VirtualMachineState *vmstate_ptr);
+void rotate_left_alu (class VirtualMachineState *vmstate_ptr);
+void rotate_right_alu (class VirtualMachineState *vmstate_ptr);
+void logical_shift_left_alu (class VirtualMachineState *vmstate_ptr);
+void logical_shift_right_alu (class VirtualMachineState *vmstate_ptr);
+	
+
+// save/load accumulator
+void set_a_to_value(class VirtualMachineState *vmstate_ptr, uint8_t);
+void save_register_to_memory_at_xy ( class VirtualMachineState *vmstate_ptr );
+void load_a_from_memory_at_xy (class VirtualMachineState *vmstate_ptr);
+void save_a_to_memory_at_xy  (class VirtualMachineState *vmstate_ptr);
+
+
+// Transfer between reg_a
+void transfer_a_to_register (class VirtualMachineState *vmstate_ptr,  uint8_t);
+void transfer_register_to_a (class VirtualMachineState *vmstate_ptr,  uint8_t);
+void transfer_a_to_zeropage (class VirtualMachineState *vmstate_ptr,  uint8_t);
+void transfer_zeropage_to_a  (class VirtualMachineState *vmstate_ptr,  uint8_t);
+
+void move_value_register_to_register(class VirtualMachineState *vmstate_ptr,  uint8_t, uint8_t);
+void move_value_register_to_zeropage(class VirtualMachineState *vmstate_ptr,  uint8_t, uint8_t);
+void move_value_zeropage_to_zeropage(class VirtualMachineState *vmstate_ptr,  uint8_t, uint8_t);
+void move_value_zeropage_to_register(class VirtualMachineState *vmstate_ptr,  uint8_t, uint8_t);
+
+
+// Stack
+void push_a(class VirtualMachineState *vmstate_ptr );
+void push_register(class VirtualMachineState *vmstate_ptr , uint8_t);
+void push_zeropage(class VirtualMachineState *vmstate_ptr,  uint8_t);
+void pop_a(class VirtualMachineState *vmstate_ptr );
+void pop_register(class VirtualMachineState *vmstate_ptr , uint8_t);
+void pop_zeropage(class VirtualMachineState *vmstate_ptr, uint8_t);
+
+
+// Conditions
+void is_a_zero (class VirtualMachineState *vmstate_ptr  );
+void is_a_nonzero (class VirtualMachineState *vmstate_ptr  );
+void is_a_greater_than_b (class VirtualMachineState *vmstate_ptr  );
+void is_a_equal_b(class VirtualMachineState *vmstate_ptr  );
+
+
+// Jumps
+void jump_to_xy_uncoditional (class VirtualMachineState *vmstate_ptr  );
+void jump_to_xy_if_true (class VirtualMachineState *vmstate_ptr  );
+void jump_to_xy_if_false (class VirtualMachineState *vmstate_ptr);
+void jump_to_adres_unconditional(class VirtualMachineState *vmstate_ptr,  uint8_t, uint8_t);
+void jump_to_adres_if_true(class VirtualMachineState *vmstate_ptr,  uint8_t, uint8_t);
+void jump_to_adres_if_false(class VirtualMachineState *vmstate_ptr,  uint8_t, uint8_t);
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 void no_operation(class VirtualMachineState *state)
 {
 	// do nothing xD
 	return;
 }
+
+void instruction_increment_register(class VirtualMachineState *vmstate_ptr, uint8_t register_bytecode)
+{
+	vmstate_ptr->setRegisterValueByBytecode(
+			register_bytecode, 
+			1 + vmstate_ptr->getRegisterValueByBytecode(register_bytecode));
+}
+void instruction_decrement_register(class VirtualMachineState *vmstate_ptr, uint8_t register_bytecode)
+{
+	vmstate_ptr->setRegisterValueByBytecode(
+			register_bytecode, 
+			(-1) + vmstate_ptr->getRegisterValueByBytecode(register_bytecode));
+}
+
+
+// Stack {
+void  instruction_push_register (
+		class VirtualMachineState *vmstate_ptr ,
+		uint8_t register_code) 
+{
+	uint8_t stack_pointer = vmstate_ptr->getRegisterValueByName("s");
+	vmstate_ptr->setRegisterValueByName("s", stack_pointer+1);
+
+	vmstate_ptr->setMemoryValueAt (
+			MEMPAGE_STACK, 
+			stack_pointer, 
+			vmstate_ptr->getRegisterValueByBytecode(register_code) );
+}
+
+
+void  instruction_pop_register (
+		class VirtualMachineState *vmstate_ptr ,
+		uint8_t register_code ) 
+{
+	static const uint8_t stack_page = MEMPAGE_STACK;
+	
+	uint8_t stack_pointer = vmstate_ptr->getRegisterValueByName("s");
+	--stack_pointer;
+	vmstate_ptr->setRegisterValueByName("s", stack_pointer);
+
+	uint8_t value = vmstate_ptr->getMemoryValueAt(MEMPAGE_STACK, stack_pointer);
+	vmstate_ptr->setRegisterValueByBytecode(register_code, value);
+	
+}
+// } endof Stack
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Old, legacy instructions:
 
 // Incrementing
 void  increment_register (
@@ -225,49 +374,23 @@ void jump_if_not(class VirtualMachineState *vmstate)
 
 
 
-void instruction_increment_register(class VirtualMachineState *vmstate_ptr, uint8_t register_bytecode)
-{
-	vmstate_ptr->setRegisterValueByBytecode(
-			register_bytecode, 
-			1 + vmstate_ptr->getRegisterValueByBytecode(register_bytecode));
-}
-void instruction_decrement_register(class VirtualMachineState *vmstate_ptr, uint8_t register_bytecode)
-{
-	vmstate_ptr->setRegisterValueByBytecode(
-			register_bytecode, 
-			(-1) + vmstate_ptr->getRegisterValueByBytecode(register_bytecode));
-}
 
 
-// Stack {
-void  instruction_push_register (
-		class VirtualMachineState *vmstate_ptr ,
-		uint8_t register_code) 
-{
-	uint8_t stack_pointer = vmstate_ptr->getRegisterValueByName("s");
-	vmstate_ptr->setRegisterValueByName("s", stack_pointer+1);
-
-	vmstate_ptr->setMemoryValueAt (
-			MEMPAGE_STACK, 
-			stack_pointer, 
-			vmstate_ptr->getRegisterValueByBytecode(register_code) );
-}
 
 
-void  instruction_pop_register (
-		class VirtualMachineState *vmstate_ptr ,
-		uint8_t register_code ) 
-{
-	static const uint8_t stack_page = MEMPAGE_STACK;
-	
-	uint8_t stack_pointer = vmstate_ptr->getRegisterValueByName("s");
-	--stack_pointer;
-	vmstate_ptr->setRegisterValueByName("s", stack_pointer);
 
-	uint8_t value = vmstate_ptr->getMemoryValueAt(MEMPAGE_STACK, stack_pointer);
-	vmstate_ptr->setRegisterValueByBytecode(register_code, value);
-	
-}
-// } endof Stack
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

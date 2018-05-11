@@ -12,7 +12,6 @@
 
 
 
-
 struct InstructionSet {
 	std::vector<struct Instruction> instructions_vector;
 	struct Instruction invalid_instruction;

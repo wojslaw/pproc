@@ -1,5 +1,56 @@
 #include "VirtualMachineState.hpp"
 
+
+
+
+
+
+vm_Instruction::vm_Instruction (
+		uint8_t input_bytecode ,
+		std::string input_mnemonic ,
+		std::string input_fullname ,
+		vm_operationPointer_noOperand input_operation_pointer )
+{
+	bytecode = input_bytecode;
+	mnemonic = input_mnemonic;
+	fullname = input_fullname;
+	operation_pointer.no_operand = input_operation_pointer;
+}
+
+
+vm_Instruction::vm_Instruction (
+		uint8_t input_bytecode ,
+		std::string input_mnemonic ,
+		std::string input_fullname ,
+		vm_operationPointer_oneByteOperand input_operation_pointer )
+{
+		bytecode = input_bytecode;
+		mnemonic = input_mnemonic;
+		fullname = input_fullname;
+		operation_pointer.one_byte_operand = input_operation_pointer;
+}
+
+
+vm_Instruction::vm_Instruction (
+		uint8_t input_bytecode ,
+		std::string input_mnemonic ,
+		std::string input_fullname ,
+		vm_operationPointer_twoByteOperand input_operation_pointer )
+{
+		bytecode = input_bytecode;
+		mnemonic = input_mnemonic;
+		fullname = input_fullname;
+		operation_pointer.two_byte_operand = input_operation_pointer;
+}
+
+
+
+
+
+
+
+
+
 Register::Register(
 		std::string regcode , 
 		uint8_t regnumcode,
@@ -31,6 +82,10 @@ void VirtualMachineState::addAdrReg(
 
 VirtualMachineState::VirtualMachineState()
 {
+
+
+
+
 	vector_registers_adresable = std::vector<struct Register>();
 	vector_registers_adresable.reserve(0x08);
 	
@@ -90,8 +145,24 @@ VirtualMachineState::VirtualMachineState()
 			"the memory cell from which the machine is reading currently");
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 	std::cout << "\n Created VirtualMachineState. ";
 }
+
+
+
 
 
 VirtualMachineState::~VirtualMachineState()
@@ -156,7 +227,6 @@ void VirtualMachineState::setRegisterValueByName(std::string regnam, uint8_t val
 		fprintf(stderr, "Error: Couldn't set register '%s' to 0x%0x", regnam.c_str(), value);
 		return;
 	}
-
 	reg->value = value;
 }
 
@@ -189,8 +259,6 @@ void VirtualMachineState::setRegisterByName(char regnam, uint8_t value)
 	rname.at(0) = regnam;
 	setRegisterValueByName(rname, value);
 	return;
-
-	//register_map.at(regnam) = value;
 }
 
 
@@ -199,8 +267,6 @@ uint8_t VirtualMachineState::getRegisterByName(char regnam)
 	std::string rname;
 	rname.at(0) = regnam;
 	return getRegisterValueByName(rname);
-
-	//return register_map.at(regnam);
 }	
 
 
@@ -312,24 +378,22 @@ void VirtualMachineState::fetchCurrentInstruction(void)
 }
 
 
-int VirtualMachineState::evaluateCurrentInstruction()
-{
-	//struct Instruction instruction = instruction_set->findInstructionByBytecode(vector_registers_instruction);	
-	
-	//instruction		
 
 
-	return 2;
-}
 
 
-void VirtualMachineState::doMachineCycle(void)
-{
-	std::cout << "\ndoMachineCycle Not done yet";
-	fetchCurrentInstruction();
-	int bytes_forwards = evaluateCurrentInstruction();
-	incrementPC_times(bytes_forwards);
-}
+
+//
+// ---[ instruction set ]--- {
+//
+//
+// } end of instruction set
+//
+
+
+
+
+
 
 
 
