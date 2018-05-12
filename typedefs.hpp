@@ -12,7 +12,10 @@ enum Adrestype {
 	adrestype_value ,
 	adrestype_adres ,
 	adrestype_registerBytecode ,
-	adrestype_zeropage
+	adrestype_zeropage,
+
+	adrestype_one_byte,
+	adrestype_two_byte,
 };
 
 

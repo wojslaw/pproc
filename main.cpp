@@ -32,7 +32,31 @@ Upewnic sie, ze logical_shift jest zawsze prawidlowy(zero padding)
 
 int main()
 {
+	
 	VirtualMachine vm = VirtualMachine();
+	printf("  0x%02x", vm.cpu_state.memory.at(0x100*0x100-0x01));
+
+	vm.executeBytecodeInstruction(0x0b, 0x04, 0x00);
+	vm.executeBytecodeInstruction(0x0a, 0x00   , 0x00);
+
+	vm.printInstructionSet();
+	vm.cpu_state.printAdresableRegisters();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	/*
 	vm.isa.printInstructionSet();
 	Parser prs = Parser(&vm);
 
@@ -69,9 +93,8 @@ int main()
 	vm.state.printAdresableRegisters();
 	std::cout << "Memory: \n";
 	vm.state.printMemory(0x07, 0x00, 0x16);
-
+*/
 	printf("\n\n");
 
-	printf(" tab = `%d` \n", '\t');
 	return 0;
 }

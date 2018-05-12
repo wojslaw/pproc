@@ -1,6 +1,14 @@
 #include "Instruction.hpp"
 
 
+CPU_WrappedInstruction::~CPU_WrappedInstruction()
+{
+	// dtor
+}
+
+
+
+
 Instruction::Instruction()
 {
 	op_ptr.voidFunctionPointer = nullptr;
@@ -63,3 +71,24 @@ void Instruction::printInstruction()
 	std::cout << fullname;
 	printf("`:`0x%x`adrestype (@%p)", adrestype, op_ptr.voidFunctionPointer);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

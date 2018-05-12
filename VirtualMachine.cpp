@@ -1,14 +1,249 @@
 #include "VirtualMachine.hpp"
 
 
+
+
+
+void VirtualMachine::addInstruction (
+			cpu_instruction_pointer input_instruction_pointer ,
+			int input_adrestype ,
+			std::string input_mnemonic ,
+			std::string input_fullname
+		)
+{
+	vector_of_instructions.emplace_back(CPU_WrappedInstruction(
+		vector_of_instructions.size() ,
+		input_instruction_pointer,
+		input_adrestype,
+		input_mnemonic,
+		input_fullname
+	));
+}
+
+
+
+
+
+
+
+void VirtualMachine::addWrappedInstruction (
+			std::string input_mnemonic ,
+			std::string input_fullname ,
+			std::function<int (struct CPUState *, uint8_t , uint8_t)> input_instruction
+		)
+{
+	vector_of_wrapped_instructions.emplace_back(WrappedInstruction(
+		vector_of_wrapped_instructions.size() ,
+		input_instruction ,
+		input_mnemonic,
+		input_fullname
+	));
+}
+void VirtualMachine::addBareInstruction (
+		std::function<int (struct CPUState *, uint8_t, uint8_t)> bare_instruction
+		)
+{
+	vector_of_bare_instructions.emplace_back(bare_instruction);
+}
+
+void VirtualMachine::createDefaultInstructionSet ()
+{
+	addWrappedInstruction( "nop", "no-operation", [] (struct CPUState *cpu_state_pointer, uint8_t operand0, uint8_t operand1)
+			{
+				return 0;
+			});
+
+	//
+	//----------------[ increment/decrement ]---
+	//
+	addWrappedInstruction( "inc-reg", "increment-register", [] (struct CPUState *cpu_state_pointer, uint8_t operand0, uint8_t operand1)
+			{
+				cpu_state_pointer->registers_adresable.at(operand0) = cpu_state_pointer->registers_adresable.at(operand0) + 1;
+				return 1;
+			});
+	addWrappedInstruction( "dec-reg", "decrement-register", [] (struct CPUState *cpu_state_pointer, uint8_t operand0, uint8_t operand1)
+			{
+				cpu_state_pointer->registers_adresable.at(operand0) = cpu_state_pointer->registers_adresable.at(operand0) - 1;
+				return 1;
+			});
+	
+
+
+	//
+	//------------------[ arithmetic, logic ]---
+	//
+
+	addWrappedInstruction( "add-alu", "add-alu", [] (struct CPUState *cpu_state_pointer, uint8_t operand0, uint8_t operand1)
+			{
+				cpu_state_pointer->registers_adresable.at(regcode_a) = 
+					cpu_state_pointer->registers_adresable.at(regcode_a)  
+					+
+					cpu_state_pointer->registers_adresable.at(regcode_a)  ;
+				return 0;
+			});
+
+	addWrappedInstruction( "sub-alu", "subtract-alu", [] (struct CPUState *cpu_state_pointer, uint8_t operand0, uint8_t operand1)
+			{
+				cpu_state_pointer->registers_adresable.at(regcode_a) = 
+					cpu_state_pointer->registers_adresable.at(regcode_a)  
+					-
+					cpu_state_pointer->registers_adresable.at(regcode_a)  ;
+				return 0;
+			});
+
+
+	addWrappedInstruction( "xor-alu", "xor-bitwise-alu", [] (struct CPUState *cpu_state_pointer, uint8_t operand0, uint8_t operand1)
+			{
+				cpu_state_pointer->registers_adresable.at(regcode_a) = 
+					cpu_state_pointer->registers_adresable.at(regcode_a)  
+					^
+					cpu_state_pointer->registers_adresable.at(regcode_a)  ;
+				return 0;
+			});
+	addWrappedInstruction( "or-alu", "or-bitwise-alu", [] (struct CPUState *cpu_state_pointer, uint8_t operand0, uint8_t operand1)
+			{
+				cpu_state_pointer->registers_adresable.at(regcode_a) = 
+					cpu_state_pointer->registers_adresable.at(regcode_a)  
+					|
+					cpu_state_pointer->registers_adresable.at(regcode_a)  ;
+				return 0;
+			});
+	addWrappedInstruction( "and-alu", "and-bitwise-alu", [] (struct CPUState *cpu_state_pointer, uint8_t operand0, uint8_t operand1)
+			{
+				cpu_state_pointer->registers_adresable.at(regcode_a) = 
+					cpu_state_pointer->registers_adresable.at(regcode_a)  
+					&
+					cpu_state_pointer->registers_adresable.at(regcode_a)  ;
+				return 0;
+			});
+	addWrappedInstruction( "not-alu", "not-bitwise-alu", [] (struct CPUState *cpu_state_pointer, uint8_t operand0, uint8_t operand1)
+			{
+				cpu_state_pointer->registers_adresable.at(regcode_a) = 
+					~cpu_state_pointer->registers_adresable.at(regcode_a)  ;
+				return 0;
+			});
+	addWrappedInstruction( "lsl-alu", "logical-shift-left-alu", [] (struct CPUState *cpu_state_pointer, uint8_t operand0, uint8_t operand1)
+			{
+				cpu_state_pointer->registers_adresable.at(regcode_a) = 
+					cpu_state_pointer->registers_adresable.at(regcode_a) << 1 ;
+				return 0;
+			});
+
+	addWrappedInstruction( "lsr-alu", "logical-shift-left-alu", [] (struct CPUState *cpu_state_pointer, uint8_t operand0, uint8_t operand1)
+			{
+				cpu_state_pointer->registers_adresable.at(regcode_a) = 
+					cpu_state_pointer->registers_adresable.at(regcode_a) >> 1 ;
+				return 0;
+			});
+
+
+			//
+			//  
+			//
+	addWrappedInstruction( "seta-val", "set-a-to-value", [] (struct CPUState *cpu_state_pointer, uint8_t operand0, uint8_t operand1)
+			{
+				cpu_state_pointer->registers_adresable.at(regcode_a) = 
+					operand0 ;
+				return 1;
+			});
+
+
+			//
+			//-------------[ memory - xy ]---
+			//
+	addWrappedInstruction( "save-reg-xy", "save-register-to-memory-at-xy", [] (struct CPUState *cpu_state_pointer, uint8_t operand0, uint8_t operand1)
+			{
+				cpu_state_pointer->registers_adresable.at(regcode_a) = 
+					operand0 ;
+				return 1;
+			});
+	addWrappedInstruction( "load-reg-xy", "load-register-from-memory-at-xy", [] (struct CPUState *cpu_state_pointer, uint8_t operand0, uint8_t operand1)
+			{
+				cpu_state_pointer->memory.at( 
+						0x100*cpu_state_pointer->registers_adresable.at(regcode_x)
+						+ 
+						cpu_state_pointer->registers_adresable.at(regcode_x) 
+					) = operand0;
+				return 1;
+			});
+
+
+			//
+			//------------[ memory - adres ]---
+			//
+			
+			//
+			//------------[ jumps ]
+			//
+			
+			addWrappedInstruction( "jump-adres", "jump_to_adres_unconditional", [] (struct CPUState *cpu_state_pointer, uint8_t operand0, uint8_t operand1)
+			{
+				cpu_state_pointer->registers_adresable.at(regcode_p) 
+					 = operand0;
+				cpu_state_pointer->registers_adresable.at(regcode_c) 
+					= operand1;
+				return 2;
+			});
+
+
+}
+
+
+
+
 VirtualMachine::VirtualMachine()
 {
+	createDefaultInstructionSet();
+
 	//ctor
 }
+
+
+
+void VirtualMachine::executeBytecodeInstruction(uint8_t instruction_bytecode, uint8_t operand0, uint8_t operand1)
+{
+	vector_of_wrapped_instructions.at(instruction_bytecode).instruction (&cpu_state, operand0, operand1);
+
+	return;
+
+
+
+	auto instruction = vector_of_instructions.at(instruction_bytecode);
+	if(instruction.adrestype == adrestype_implied) {
+		instruction.instruction_pointer  (&cpu_state, 0, 0);
+	} else if(instruction.adrestype == adrestype_one_byte) {
+		instruction.instruction_pointer(&cpu_state , operand0, 0);
+	} else if(instruction.adrestype == adrestype_two_byte) {
+		instruction.instruction_pointer(&cpu_state, operand0, operand1);
+	}
+}
+
+
+void VirtualMachine::printInstructionSet()
+{
+	printf("\nInstruction set:\n");
+	int i = 0;
+	for(auto ins : vector_of_wrapped_instructions) {
+		printf("%02d.  0x%02x  `%s`: '%s'  \n", 
+				i ,   
+				ins.bytecode ,
+				ins.mnemonic.c_str() ,
+				ins.fullname.c_str()
+				);
+		++i;
+	}
+}
+
+
+
 VirtualMachine::~VirtualMachine()
 {
 
 }
+
+
+
+
 VirtualMachineState* VirtualMachine::getPointerToState()
 {
 	return &(state);
@@ -122,6 +357,67 @@ void VirtualMachine::doMachineCycle(void)
 
 
 
+/*
+	addInstruction(
+		&cpu_instruction::no_operation,
+		adrestype_implied,
+		"no-op",
+		"no operation xD"
+	);
+
+	addInstruction(
+		&cpu_instruction::increment_register ,
+		adrestype_one_byte ,
+		"inc-reg" ,
+		"increment-register"
+	);
+
+	
+	addInstruction( &cpu_instruction::decrement_register          
+			, adrestype_one_byte  , "dec-reg", "decrement-register " );
+	addInstruction( &cpu_instruction::add_alu                      
+			, adrestype_implied , "add-alu", "add-alu" );
+	addInstruction( &cpu_instruction::subtract_alu                      
+			, adrestype_implied , "sub-alu", "subtract-alu" );
+	addInstruction( &cpu_instruction::xor_bitwise_alu                      
+			, adrestype_implied , "xor-alu", "xor-bitwise-alu" );
+	addInstruction( &cpu_instruction::or_bitwise_alu                      
+			, adrestype_implied , "or-alu ", " " );
+	addInstruction( &cpu_instruction::and_bitwise_alu                      
+			, adrestype_implied , "and-alu", " " );
+	addInstruction( &cpu_instruction::not_bitwise_alu                      
+			, adrestype_implied , "not-alu", " " );
+	addInstruction( &cpu_instruction::logical_shift_left_alu                      
+			, adrestype_implied , "lsl-alu", " " );
+	addInstruction( &cpu_instruction::logical_shift_right_alu                      , adrestype_implied , "lsr-alu", " " );
+	addInstruction( &cpu_instruction::set_a_to_value                      , adrestype_one_byte , "sav-reg-xy", " " );
+	addInstruction( &cpu_instruction::save_register_to_memory_at_xy                      , adrestype_one_byte , " ", " " );
+	addInstruction( &cpu_instruction::load_a_from_memory_at_xy                       , adrestype_implied , " ", " " );
+	addInstruction( &cpu_instruction::save_a_to_memory_at_xy                       , adrestype_implied , " ", " " );
+	addInstruction( &cpu_instruction::transfer_a_to_register                      , adrestype_one_byte , " ", " " );
+	addInstruction( &cpu_instruction::transfer_register_to_a                      , adrestype_one_byte , " ", " " );
+	addInstruction( &cpu_instruction::transfer_a_to_zeropage                      , adrestype_one_byte , " ", " " );
+	addInstruction( &cpu_instruction::transfer_zeropage_to_a                      , adrestype_one_byte , " ", " " );
+	addInstruction( &cpu_instruction::move_value_register_to_register                      , adrestype_two_byte , " ", " " );
+	addInstruction( &cpu_instruction::move_value_register_to_zeropage                      , adrestype_two_byte , " ", " " );
+	addInstruction( &cpu_instruction::move_value_zeropage_to_zeropage                      , adrestype_two_byte , " ", " " );
+	addInstruction( &cpu_instruction::move_value_zeropage_to_register                      , adrestype_two_byte , " ", " " );
+	addInstruction( &cpu_instruction::push_a                      , adrestype_implied , " ", " " );
+	addInstruction( &cpu_instruction::push_register                      , adrestype_one_byte , " ", " " );
+	addInstruction( &cpu_instruction::push_zeropage                      , adrestype_one_byte , " ", " " );
+	addInstruction( &cpu_instruction::pop_a                      , adrestype_implied , " ", " " );
+	addInstruction( &cpu_instruction::pop_register                      , adrestype_one_byte , " ", " " );
+	addInstruction( &cpu_instruction::pop_zeropage                      , adrestype_one_byte , " ", " " );
+	addInstruction( &cpu_instruction::is_a_zero                       , adrestype_implied , " ", " " );
+	addInstruction( &cpu_instruction::is_a_nonzero                      , adrestype_implied , " ", " " );
+	addInstruction( &cpu_instruction::is_a_greater_than_b                      , adrestype_implied , " ", " " );
+	addInstruction( &cpu_instruction::is_a_equal_b                       , adrestype_implied , " ", " " );
+	addInstruction( &cpu_instruction::jump_to_xy_uncoditional                       , adrestype_implied , " ", " " );
+	addInstruction( &cpu_instruction::jump_to_xy_if_true                       , adrestype_implied , " ", " " );
+	addInstruction( &cpu_instruction::jump_to_xy_if_false                      , adrestype_implied , " ", " " );
+	addInstruction( &cpu_instruction::jump_to_adres_unconditional                      , adrestype_two_byte , " ", " " );
+	addInstruction( &cpu_instruction::jump_to_adres_if_true                      , adrestype_two_byte , " ", " " );
+	addInstruction( &cpu_instruction::jump_to_adres_if_false                      , adrestype_two_byte , " ", " " );*/
 
 
 
