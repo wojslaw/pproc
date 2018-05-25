@@ -3,13 +3,19 @@
  * VirtualMachine::EvaluateOperation
  *
  *
+ *
+ *
+ *
+			KOMPILACJA
+
+ 
 Dekodowanie instrukcji
+
 
 
 Rozne sposoby wyswietlania danych: hex, dec, znak
 Operacje
 Flagi
-Upewnic sie, ze logical_shift jest zawsze prawidlowy(zero padding)
 */
 
 #include <cstdio>
@@ -29,18 +35,62 @@ Upewnic sie, ze logical_shift jest zawsze prawidlowy(zero padding)
 #include "typedefs.hpp"
 
 
+void compileAndLoadProgram (
+		struct VirtualMachine *vm ,
+		std::string program ,
+		uint8_t ,
+		uint8_t );
+
+
+
+
+
+
+
+
+
+void NEW_compileAndLoadProgram(VirtualMachine *vm, 
+		std::string source_code )
+{
+	std::cout << source_code;
+	uint8_t startpage = 0x07;
+	uint8_t startcell = 0x00;
+
+	auto parser = Parser(vm);
+
+	
+	std::vector<std::vector<std::string>> parsed_program = parser.parseProgram(source_code);
+
+
+	for (auto tokvec : parsed_program) {
+		std::cout << "\n (";
+		for (auto tok : tokvec) {
+			std::cout << "`" << tok << "`";
+		}
+		std::cout << ")";
+	}
+
+}
+
 
 int main()
 {
 	
 	VirtualMachine vm = VirtualMachine();
-	printf("  0x%02x", vm.cpu_state.memory.at(0x100*0x100-0x01));
-
-	vm.executeBytecodeInstruction(0x0b, 0x04, 0x00);
-	vm.executeBytecodeInstruction(0x0a, 0x00   , 0x00);
-
+	auto parser = Parser(&vm);
 	vm.printInstructionSet();
-	vm.cpu_state.printAdresableRegisters();
+
+	//vm.isa.printInstructionSet();
+
+	NEW_compileAndLoadProgram(&vm, 
+			"(dec-reg ab) (dec-reg ab) (add-val 0x20) (adc-alu) (push-aa)");
+
+		
+
+	std::cout << std::endl << std::endl;
+
+	return 0;
+}
 
 
 
@@ -51,50 +101,63 @@ int main()
 
 
 
+void compileAndLoadProgram (
+		VirtualMachine *vm,
+		std::string program,
+		uint8_t startpage ,
+		uint8_t startcell )
+{
+	auto prs = Parser(vm);
 
 
-
-
-
-	/*
-	vm.isa.printInstructionSet();
-	Parser prs = Parser(&vm);
-
-	auto vector_of_text_instructions =	prs.splitProgramIntoTextInstructions("(ldv 0x10) (tat x)  (psh-reg 0x00)");
+	auto vector_of_text_instructions =	prs.splitProgramIntoTextInstructions(program);
 	for( auto instr: vector_of_text_instructions ) {
 		std::cout << "\n(`" << instr.instruction << "`,`" << instr.operand << "`)";
 	}
 	std::cout << "\n";
 
-	auto vector_of_parsed_instructions = prs.parseTextInstructions(vector_of_text_instructions);
-	
-	for( auto instr: vector_of_parsed_instructions ) {
-		std::cout << "\n(`" << instr.instruction.fullname << "`";
-		printf("`0x%02x`)", instr.operand);
+
+
+	auto vector_of_bytecode = prs.compileVectorOfTextInstructionsIntoBytecode(vector_of_text_instructions, vm);
+
+
+	std::cout << "\n Compiled:\n";
+	for( auto instr: vector_of_bytecode ) {
+		printf ("\n 0x%02x 0x%02x", instr.at(0), instr.at(1));
+	}
+	std::cout << "\n";
+
+
+	std::vector<uint8_t> vector_of_bytes;
+
+	for ( std::vector<uint8_t> vecb : vector_of_bytecode ) {
+		vector_of_bytes.emplace_back(vecb.at(0));
+		vector_of_bytes.emplace_back(vecb.at(1));
 	}
 
-	std::cout << "\n\n\n";
-	  
 
 
-	auto vector_of_compiled_instructions = prs.compileParsedProgramToBytecode(vector_of_parsed_instructions);
-	auto vector_of_bytes = std::vector<uint8_t>();
+	vm->cpu_state.loadSequenceOfBytesIntoMemory(
+		vector_of_bytes,
+		0x07,
+		0x00);
 
-	for( auto instr: vector_of_compiled_instructions ) {
-		printf("pushing (`0x%02x` `0x%02x`)\n", instr.instruction, instr.operand);
-		vector_of_bytes.emplace_back(instr.instruction);
-		vector_of_bytes.emplace_back(instr.operand);
+
+
+
+	vm->cpu_state.registers_adresable.at(regcode_p) = 0x07;
+
+	for (int i = 1; i <= 10; ++i ) {
+		vm->doMachineCycle();
 	}
 
-	
-	vm.state.loadSequenceOfBytesIntoMemory(vector_of_bytes, 0x07, 0x00);
-	printf("\n\n@0x06ff = 0x%02x\n\n", vm.state.getMemoryValueAt(0x07, 0x00));
-	std::cout << "Registers: \n";
-	vm.state.printAdresableRegisters();
-	std::cout << "Memory: \n";
-	vm.state.printMemory(0x07, 0x00, 0x16);
-*/
-	printf("\n\n");
 
-	return 0;
+
+	vm->cpu_state.printMemory(0x06, 0xfe, 0x10);
+	std::cout << "\n\n stack:";
+	vm->cpu_state.printMemory(0x01, 0x00, 0x05);
+	vm->cpu_state.printAdresableRegisters();
+	vm->cpu_state.printFetchedInstruction();
 }
+
+

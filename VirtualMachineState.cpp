@@ -5,49 +5,6 @@
 
 
 
-vm_Instruction::vm_Instruction (
-		uint8_t input_bytecode ,
-		std::string input_mnemonic ,
-		std::string input_fullname ,
-		vm_operationPointer_noOperand input_operation_pointer )
-{
-	bytecode = input_bytecode;
-	mnemonic = input_mnemonic;
-	fullname = input_fullname;
-	operation_pointer.no_operand = input_operation_pointer;
-}
-
-
-vm_Instruction::vm_Instruction (
-		uint8_t input_bytecode ,
-		std::string input_mnemonic ,
-		std::string input_fullname ,
-		vm_operationPointer_oneByteOperand input_operation_pointer )
-{
-		bytecode = input_bytecode;
-		mnemonic = input_mnemonic;
-		fullname = input_fullname;
-		operation_pointer.one_byte_operand = input_operation_pointer;
-}
-
-
-vm_Instruction::vm_Instruction (
-		uint8_t input_bytecode ,
-		std::string input_mnemonic ,
-		std::string input_fullname ,
-		vm_operationPointer_twoByteOperand input_operation_pointer )
-{
-		bytecode = input_bytecode;
-		mnemonic = input_mnemonic;
-		fullname = input_fullname;
-		operation_pointer.two_byte_operand = input_operation_pointer;
-}
-
-
-
-
-
-
 
 
 
@@ -383,12 +340,46 @@ void VirtualMachineState::fetchCurrentInstruction(void)
 
 
 
-//
-// ---[ instruction set ]--- {
-//
-//
-// } end of instruction set
-//
+
+
+
+vm_Instruction::vm_Instruction (
+		uint8_t input_bytecode ,
+		std::string input_mnemonic ,
+		std::string input_fullname ,
+		vm_operationPointer_noOperand input_operation_pointer )
+{
+	bytecode = input_bytecode;
+	mnemonic = input_mnemonic;
+	fullname = input_fullname;
+	operation_pointer.no_operand = input_operation_pointer;
+}
+
+
+vm_Instruction::vm_Instruction (
+		uint8_t input_bytecode ,
+		std::string input_mnemonic ,
+		std::string input_fullname ,
+		vm_operationPointer_oneByteOperand input_operation_pointer )
+{
+		bytecode = input_bytecode;
+		mnemonic = input_mnemonic;
+		fullname = input_fullname;
+		operation_pointer.one_byte_operand = input_operation_pointer;
+}
+
+
+vm_Instruction::vm_Instruction (
+		uint8_t input_bytecode ,
+		std::string input_mnemonic ,
+		std::string input_fullname ,
+		vm_operationPointer_twoByteOperand input_operation_pointer )
+{
+		bytecode = input_bytecode;
+		mnemonic = input_mnemonic;
+		fullname = input_fullname;
+		operation_pointer.two_byte_operand = input_operation_pointer;
+}
 
 
 

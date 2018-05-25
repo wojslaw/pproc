@@ -5,13 +5,23 @@
 
 #include <map>
 #include <string>
-#include <map>
+#include <vector>
 
 #include <fstream>
 
 #include "typedefs.hpp"
 
 #include "VirtualMachine.hpp"
+
+
+
+const char DELIMITER_BEGIN = '(';
+const char DELIMITER_END = ')';
+const char SEPARATOR = ' ';
+const std::string SEPARATORS = " \n\t";
+
+
+
 
 struct InstructionText {
 	std::string instruction;
@@ -22,6 +32,7 @@ struct InstructionText {
 			operand = input_operand;
 		};
 };
+
 
 struct InstructionParsed {
 	struct Instruction instruction;
@@ -45,31 +56,60 @@ struct InstructionCompiled {
 	};
 };
 
-class Parser {
-private:
-	//std::vector<struct InstructionText> instructions_text;
-	//std::vector<struct InstructionParsed> instructions_parsed;
-	//std::vector<struct InstructionCompiled> instructions_compiled;
-	std::map<std::string, FullAdres> symbols_adres;
-	std::map<std::string, uint8_t> symbols_byte;
+struct BytePair {
+	uint8_t byte[2];
+};
 
+struct Parser {
 	VirtualMachine *vm;
-public:
-	Parser(VirtualMachine *vmptr) {
-		vm = vmptr;
+	Parser(struct VirtualMachine *);
 
-		//instructions_text = std::vector<struct InstructionText>() ;
-		//instructions_parsed = std::vector<struct InstructionParsed>() ;
-		//instructions_compiled  = std::vector<struct InstructionCompiled>();
-		symbols_adres = std::map<std::string, FullAdres>();
-		symbols_byte = std::map<std::string, uint8_t>();
-	};
+	
+	
+	std::map<std::string, uint8_t> symbolmap_byte;
+	std::map<std::string, struct BytePair> symbolmap_bytepair;
+	
 
 
+	std::vector<std::vector<std::string>> parseProgram(std::string source);
+	std::vector<uint8_t> compileParsedProgram(std::vector<std::vector<std::string>>);
+
+
+	std::vector<std::string> splitTextIntoStatements (std::string text);
+
+
+
+	std::vector<std::string> splitStatementIntoTokens (std::string statement);
+
+
+
+
+
+
+
+
+
+	std::vector<std::string> splitTextIntoExpressions (std::string);
+
+
+	std::vector<std::string> splitExpressionIntoStatements(std::string expression);
+
+
+	std::vector<std::vector<uint8_t>> compileVectorOfTextInstructionsIntoBytecode
+		( std::vector<struct InstructionText> vector_of_text_instructions,
+		  VirtualMachine *vm_pointer );
+
+	std::vector<uint8_t> compileTextInstructionIntoBytecode (
+		struct InstructionText ,
+		VirtualMachine *vm_pointer );
+
+
+
+	std::vector<uint8_t> compileFromStringToBytecode (
+			std::string text_of_program );
 
 	uint8_t parseStringIntoOperandByte(std::string text_operand, int required_adrestype);
 
-	//std::vector<struct InstructionText> parseProgramIntoTextInstructions(std::string);
 
    std::vector<struct InstructionText> splitProgramIntoTextInstructions(std::string);
 	
@@ -83,6 +123,4 @@ public:
 	//void parseFile( /* Need some file stream or something :O*/ );
 
 	void interpretParenthesisedFile(std::string filename);
-
-	//void executeParsed(VirtualMachine *);
 };

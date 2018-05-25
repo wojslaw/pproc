@@ -1,12 +1,4 @@
-(ldv 0xff)
-(tat b)
-(ldv 0x11)
-(xor)
-(tat b)
-(ldv 0x4a)
-(xor)
-(psh a)
-(psh b)
-(sva)
-(tat x)
-(jmp)
+[nop]
+[inc-reg ac]
+[inc-reg ac]
+[push-ac]

@@ -4,6 +4,9 @@
 
 
 
+
+
+
 void VirtualMachine::addInstruction (
 			cpu_instruction_pointer input_instruction_pointer ,
 			int input_adrestype ,
@@ -24,6 +27,19 @@ void VirtualMachine::addInstruction (
 
 
 
+void VirtualMachine::doMachineCycle(void)
+{
+	cpu_state.fetchTwoByteInstruction();
+
+	executeBytecodeInstruction(
+			cpu_state.registers_instruction.at(0) ,
+			cpu_state.registers_instruction.at(1) ,
+			cpu_state.registers_instruction.at(2)
+			);
+	
+}
+
+
 
 
 void VirtualMachine::addWrappedInstruction (
@@ -39,6 +55,10 @@ void VirtualMachine::addWrappedInstruction (
 		input_fullname
 	));
 }
+
+	
+	
+	
 void VirtualMachine::addBareInstruction (
 		std::function<int (struct CPUState *, uint8_t, uint8_t)> bare_instruction
 		)
@@ -46,8 +66,14 @@ void VirtualMachine::addBareInstruction (
 	vector_of_bare_instructions.emplace_back(bare_instruction);
 }
 
+
+
+
+
 void VirtualMachine::createDefaultInstructionSet ()
 {
+	vector_of_wrapped_instructions.reserve(30);
+
 	addWrappedInstruction( "nop", "no-operation", [] (struct CPUState *cpu_state_pointer, uint8_t operand0, uint8_t operand1)
 			{
 				return 0;
@@ -73,6 +99,31 @@ void VirtualMachine::createDefaultInstructionSet ()
 	//------------------[ arithmetic, logic ]---
 	//
 
+	addWrappedInstruction( "adc-alu", "add-with-carry-alu", [] (struct CPUState *cpu_state_pointer, uint8_t operand0, uint8_t operand1)
+			{
+				int a = cpu_state_pointer->registers_adresable.at(regcode_a);
+				int b = cpu_state_pointer->registers_adresable.at(regcode_a);
+				
+				a = a + b;
+				if ( a > 0xff ) {
+					cpu_state_pointer->setBitOfRegister(regcode_flags, flagnumber_carry, 1);
+				} else {
+					cpu_state_pointer->setBitOfRegister(regcode_flags, flagnumber_carry, 0);
+				}
+
+				cpu_state_pointer->registers_adresable.at(regcode_a) = (uint8_t) a;
+				return 0;
+			} );
+
+	addWrappedInstruction( "sbc-alu", "subtract-with-carry-alu", [] (struct CPUState *cpu_state_pointer, uint8_t operand0, uint8_t operand1)
+			{
+				cpu_state_pointer->registers_adresable.at(regcode_a) = 
+					cpu_state_pointer->registers_adresable.at(regcode_a)  
+					-
+					cpu_state_pointer->registers_adresable.at(regcode_a)  ;
+				return 0;
+			});
+
 	addWrappedInstruction( "add-alu", "add-alu", [] (struct CPUState *cpu_state_pointer, uint8_t operand0, uint8_t operand1)
 			{
 				cpu_state_pointer->registers_adresable.at(regcode_a) = 
@@ -82,6 +133,14 @@ void VirtualMachine::createDefaultInstructionSet ()
 				return 0;
 			});
 
+	addWrappedInstruction( "add-val", "add-alu", [] (struct CPUState *cpu_state_pointer, uint8_t operand0, uint8_t operand1)
+			{
+				cpu_state_pointer->registers_adresable.at(regcode_a) = 
+					cpu_state_pointer->registers_adresable.at(regcode_a)  
+					+
+					operand0;
+				return 0;
+			});
 	addWrappedInstruction( "sub-alu", "subtract-alu", [] (struct CPUState *cpu_state_pointer, uint8_t operand0, uint8_t operand1)
 			{
 				cpu_state_pointer->registers_adresable.at(regcode_a) = 
@@ -90,7 +149,6 @@ void VirtualMachine::createDefaultInstructionSet ()
 					cpu_state_pointer->registers_adresable.at(regcode_a)  ;
 				return 0;
 			});
-
 
 	addWrappedInstruction( "xor-alu", "xor-bitwise-alu", [] (struct CPUState *cpu_state_pointer, uint8_t operand0, uint8_t operand1)
 			{
@@ -186,6 +244,16 @@ void VirtualMachine::createDefaultInstructionSet ()
 			});
 
 
+			//
+			//-----------------[ stack ]---
+			//
+			addWrappedInstruction( "push-aa", "push-acumulator", [] (struct CPUState *cpu_state_pointer, uint8_t operand0, uint8_t operand1)
+			{
+				cpu_state_pointer->memory.at (0x100 + cpu_state_pointer->registers_adresable.at(regcode_s)) 
+					= cpu_state_pointer->registers_adresable.at(regcode_a);
+				cpu_state_pointer->incrementRegister(regcode_s);
+				return 0;
+			});
 }
 
 
@@ -235,6 +303,34 @@ void VirtualMachine::printInstructionSet()
 }
 
 
+uint8_t VirtualMachine::findInstructionByMnemonic(std::string mnemonic)
+{
+	return getInstructionBytecodeByMnemonic(mnemonic);
+}
+
+
+uint8_t VirtualMachine::getInstructionBytecodeByMnemonic(std::string mnemonic)
+{
+	for ( struct WrappedInstruction instr : vector_of_wrapped_instructions ) {
+		if (instr.mnemonic == mnemonic) {
+			return instr.bytecode;
+		}
+	}
+	std::cout << "\nDidn't find instruction of mnemonic `" << mnemonic << "`";
+}
+
+
+struct WrappedInstruction VirtualMachine::getInstructionByMnemonic(std::string mnemonic)
+{
+	for ( size_t i = 0; i < vector_of_wrapped_instructions.size(); ++i ) {
+		if ( vector_of_wrapped_instructions.at(i).mnemonic == mnemonic) {
+			return vector_of_wrapped_instructions.at(i);
+		}
+	}
+	std::cout << "\nDidn't find instruction of mnemonic `" << mnemonic << "`";
+}
+
+
 
 VirtualMachine::~VirtualMachine()
 {
@@ -244,15 +340,36 @@ VirtualMachine::~VirtualMachine()
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 VirtualMachineState* VirtualMachine::getPointerToState()
 {
-	return &(state);
+	printf("\nDeprecated functions was called: %s", __func__);
+	return 0;
+	//return &(state);
 }
 
 
 void VirtualMachine::incrementPC()
 {
-	uint8_t reg_p = state.getRegisterValueByName("p");
+	printf("\nDeprecated functions was called: %s", __func__);
+	/*uint8_t reg_p = state.getRegisterValueByName("p");
 	uint8_t reg_c = state.getRegisterValueByName("c");
 	
 	reg_c++;
@@ -260,12 +377,14 @@ void VirtualMachine::incrementPC()
 	
 
 	state.setRegisterValueByName("p", reg_p);
-	state.setRegisterValueByName("c", reg_c);
+	state.setRegisterValueByName("c", reg_c);*/
 }
 
 
-Instruction VirtualMachine::findInstructionByMnemonic(std::string mnemonic)
+/*Instruction VirtualMachine::findInstructionByMnemonic(std::string mnemonic)
 {
+
+	printf("\nDeprecated functions was called: %s", __func__);
 	for( auto ins : isa.instructions_vector ) {
 		if(ins.mnemonic == mnemonic ) {
 			return ins;
@@ -273,7 +392,28 @@ Instruction VirtualMachine::findInstructionByMnemonic(std::string mnemonic)
 	}
 	std::cout << "\nCouldn't find any instruction matching mnemonic `" << mnemonic << "`";
 	return Instruction();
+} */
+
+
+void VirtualMachine::loadBytesIntoMemory(std::vector<uint8_t> vector_of_bytes, uint8_t startpage, uint8_t startcell)
+{
+	cpu_state.loadVectorOfBytesToMemory(startpage, startcell, vector_of_bytes);
+
+
+	/*cpu_state.setRegisterValueByName("p", startpage);
+	cpu_state.setRegisterValueByName("c", startcell);
+	for(uint8_t current_byte : vector_of_bytes ) {
+		*accessMemoryByPC() = current_byte;
+		incrementPC();
+	}*/
 }
+
+
+
+
+
+
+
 
 
 void VirtualMachine::printMemory(
@@ -281,6 +421,7 @@ void VirtualMachine::printMemory(
 		uint8_t start_cell ,
 		uint8_t cellcount 
 ) {
+	printf("\nDeprecated functions was called: %s", __func__);
 	for(uint8_t i = 0; i < cellcount; i++) {
 		uint8_t curcell = start_cell+i;
 		uint8_t value = *accessMemoryAt(page, curcell);
@@ -296,42 +437,29 @@ uint8_t* VirtualMachine::accessMemoryAt (
 		uint8_t page ,
 		uint8_t cell )
 {
-	return &(state.mem[page][cell]);
+	printf("\nDeprecated functions was called: %s", __func__);
+	return 0;
+	//return &(state.mem[page][cell]);
 }
 
 
 uint8_t* VirtualMachine::accessMemoryByXY (void) 
 {
-	uint8_t page = state.getRegisterValueByName("x");
+
+	printf("\nDeprecated functions was called: %s", __func__);
+	return 0;
+	/*uint8_t page = state.getRegisterValueByName("x");
 	uint8_t cell = state.getRegisterValueByName("y");
-	return accessMemoryAt(page, cell);
+	return accessMemoryAt(page, cell);*/
 }
 
 
 uint8_t* VirtualMachine::accessMemoryByPC(void)
 {
-	uint8_t page = state.getRegisterValueByName("p");
+	printf("\nDeprecated functions was called: %s", __func__);
+	/*uint8_t page = state.getRegisterValueByName("p");
 	uint8_t cell = state.getRegisterValueByName("c");
-	return accessMemoryAt(page, cell);
-}
-
-
-void VirtualMachine::loadBytesIntoMemory(std::vector<uint8_t> vector_of_bytes, uint8_t startpage, uint8_t startcell)
-{
-	state.setRegisterValueByName("p", startpage);
-	state.setRegisterValueByName("c", startcell);
-	for(uint8_t current_byte : vector_of_bytes ) {
-		*accessMemoryByPC() = current_byte;
-		incrementPC();
-	}
-}
-
-
-void VirtualMachine::doMachineCycle(void)
-{
-	std::cout << "\nMACHINE CYCLE UNIMPLEMENTED!!!!!";
-	incrementPC();
-	incrementPC();
+	return accessMemoryAt(page, cell);*/
 }
 
 

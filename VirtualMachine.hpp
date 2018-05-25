@@ -57,8 +57,10 @@ public:
 			std::string input_fullname ,
 			std::function<int (struct CPUState *, uint8_t , uint8_t)> input_instruction );
 
+	struct WrappedInstruction getInstructionByMnemonic(std::string);
+	uint8_t findInstructionByMnemonic(std::string mnemonic);
 
-
+	uint8_t getInstructionBytecodeByMnemonic(std::string mnemonic);
 	std::vector<CPU_WrappedInstruction> vector_of_instructions;
 	void addInstruction (
 			cpu_instruction_pointer input_instruction_pointer ,
@@ -77,10 +79,10 @@ public:
 
 
 
-	struct VirtualMachineState state;
-	struct InstructionSet isa;
+//	struct VirtualMachineState state;
+//	struct InstructionSet isa;
 
-	Instruction findInstructionByMnemonic(std::string);
+//	Instruction findInstructionByMnemonic(std::string);
 	void evaluateLoadedOperation(void);
 	void incrementPC(void);
 	

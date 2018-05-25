@@ -3,4 +3,6 @@
 clear &&
 	make &&
 	clear &&
+	echo "---[STARTING]---" &&
+	clear &&
 	./przejproc
