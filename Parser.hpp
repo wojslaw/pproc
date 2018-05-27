@@ -18,7 +18,13 @@
 const char DELIMITER_BEGIN = '(';
 const char DELIMITER_END = ')';
 const char SEPARATOR = ' ';
+const char DIRECTIVE_SIGNIFIER = '#';
+
 const std::string SEPARATORS = " \n\t";
+
+const std::string DIRECTIVE_DEFINE_CONST = "#defval";
+
+
 
 
 
@@ -67,29 +73,52 @@ struct Parser {
 	
 	
 	std::map<std::string, uint8_t> symbolmap_byte;
-	std::map<std::string, struct BytePair> symbolmap_bytepair;
+	std::map<std::string, std::vector<uint8_t>> symbolmap_multibyte;
+	
 	
 
 
-	std::vector<std::vector<std::string>> parseProgram(std::string source);
-	std::vector<uint8_t> compileParsedProgram(std::vector<std::vector<std::string>>);
+	std::vector<uint8_t>  
+		compileParsedProgram(
+			std::vector<std::vector<std::string>> ,
+			VirtualMachine *vm_ptr );
 
-
-	std::vector<std::string> splitTextIntoStatements (std::string text);
-
-
-
-	std::vector<std::string> splitStatementIntoTokens (std::string statement);
-
-
+	std::vector<std::vector<std::string>> 
+		parseProgram(
+			std::string source );
 
 
 
+	
+	std::vector<std::string> 
+		splitTextIntoStatements (
+			std::string );
+	
+	std::vector<std::string> 
+		splitStatementIntoTokens (
+			std::string );
 
 
 
 
-	std::vector<std::string> splitTextIntoExpressions (std::string);
+
+	std::vector<uint8_t> 
+		compileStatement (
+			std::vector<std::string> ,
+			VirtualMachine *vm_ptr
+			 );
+
+	void executeDirective 
+			(std::vector<std::string>);
+
+
+
+
+
+
+
+	std::vector<std::string> splitTextIntoExpressions (
+			std::string);
 
 
 	std::vector<std::string> splitExpressionIntoStatements(std::string expression);

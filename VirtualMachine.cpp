@@ -56,6 +56,21 @@ void VirtualMachine::addWrappedInstruction (
 	));
 }
 
+void VirtualMachine::addWrappedInstruction (
+		std::string input_mnemonic , uint8_t input_argcount,
+		std::string input_fullname ,
+		std::function<int (struct CPUState *, uint8_t , uint8_t)> input_instruction 
+		)
+{
+	vector_of_wrapped_instructions.emplace_back( WrappedInstruction(
+		vector_of_wrapped_instructions.size() ,
+		input_mnemonic ,
+		input_fullname ,
+		input_instruction ,
+		input_argcount
+	));
+}
+
 	
 	
 	
@@ -82,12 +97,18 @@ void VirtualMachine::createDefaultInstructionSet ()
 	//
 	//----------------[ increment/decrement ]---
 	//
-	addWrappedInstruction( "inc-reg", "increment-register", [] (struct CPUState *cpu_state_pointer, uint8_t operand0, uint8_t operand1)
+	addWrappedInstruction( "inc-reg" , 1,
+			"increment-register" , 
+			[] (struct CPUState *cpu_state_pointer, uint8_t operand0, uint8_t operand1) 
 			{
 				cpu_state_pointer->registers_adresable.at(operand0) = cpu_state_pointer->registers_adresable.at(operand0) + 1;
 				return 1;
 			});
-	addWrappedInstruction( "dec-reg", "decrement-register", [] (struct CPUState *cpu_state_pointer, uint8_t operand0, uint8_t operand1)
+
+
+	addWrappedInstruction( "dec-reg", 1,
+			"decrement-register", 
+			[] (struct CPUState *cpu_state_pointer, uint8_t operand0, uint8_t operand1)
 			{
 				cpu_state_pointer->registers_adresable.at(operand0) = cpu_state_pointer->registers_adresable.at(operand0) - 1;
 				return 1;
@@ -98,7 +119,6 @@ void VirtualMachine::createDefaultInstructionSet ()
 	//
 	//------------------[ arithmetic, logic ]---
 	//
-
 	addWrappedInstruction( "adc-alu", "add-with-carry-alu", [] (struct CPUState *cpu_state_pointer, uint8_t operand0, uint8_t operand1)
 			{
 				int a = cpu_state_pointer->registers_adresable.at(regcode_a);
@@ -150,15 +170,18 @@ void VirtualMachine::createDefaultInstructionSet ()
 				return 0;
 			});
 
-	addWrappedInstruction( "xor-alu", "xor-bitwise-alu", [] (struct CPUState *cpu_state_pointer, uint8_t operand0, uint8_t operand1)
+	addWrappedInstruction( "xor-alu", 0, 
+			"xor-bitwise-alu", 
+			[] (struct CPUState *cpu_state_pointer, uint8_t operand0, uint8_t operand1)
 			{
 				cpu_state_pointer->registers_adresable.at(regcode_a) = 
 					cpu_state_pointer->registers_adresable.at(regcode_a)  
-					^
+					xor
 					cpu_state_pointer->registers_adresable.at(regcode_a)  ;
 				return 0;
 			});
-	addWrappedInstruction( "or-alu", "or-bitwise-alu", [] (struct CPUState *cpu_state_pointer, uint8_t operand0, uint8_t operand1)
+	addWrappedInstruction( "or-alu", 0,
+			"or-bitwise-alu", [] (struct CPUState *cpu_state_pointer, uint8_t operand0, uint8_t operand1)
 			{
 				cpu_state_pointer->registers_adresable.at(regcode_a) = 
 					cpu_state_pointer->registers_adresable.at(regcode_a)  
@@ -198,7 +221,8 @@ void VirtualMachine::createDefaultInstructionSet ()
 			//
 			//  
 			//
-	addWrappedInstruction( "seta-val", "set-a-to-value", [] (struct CPUState *cpu_state_pointer, uint8_t operand0, uint8_t operand1)
+	addWrappedInstruction( "seta-val", 0, 
+			"set-a-to-value", [] (struct CPUState *cpu_state_pointer, uint8_t operand0, uint8_t operand1)
 			{
 				cpu_state_pointer->registers_adresable.at(regcode_a) = 
 					operand0 ;
@@ -247,11 +271,22 @@ void VirtualMachine::createDefaultInstructionSet ()
 			//
 			//-----------------[ stack ]---
 			//
-			addWrappedInstruction( "push-aa", "push-acumulator", [] (struct CPUState *cpu_state_pointer, uint8_t operand0, uint8_t operand1)
+			addWrappedInstruction( "push-aa", 0, 
+					"push-acumulator", 
+					[] (struct CPUState *cpu_state_pointer, uint8_t operand0, uint8_t operand1)
 			{
 				cpu_state_pointer->memory.at (0x100 + cpu_state_pointer->registers_adresable.at(regcode_s)) 
 					= cpu_state_pointer->registers_adresable.at(regcode_a);
 				cpu_state_pointer->incrementRegister(regcode_s);
+				return 0;
+			});
+			addWrappedInstruction( "pop-aa", 0, 
+					"pop-to-acumulator", 
+					[] (struct CPUState *cpu_state_pointer, uint8_t operand0, uint8_t operand1)
+			{
+				cpu_state_pointer->decrementRegister(regcode_s);
+				cpu_state_pointer->memory.at (0x100 + cpu_state_pointer->registers_adresable.at(regcode_s)) 
+					= cpu_state_pointer->registers_adresable.at(regcode_a);
 				return 0;
 			});
 }
@@ -265,7 +300,6 @@ VirtualMachine::VirtualMachine()
 
 	//ctor
 }
-
 
 
 void VirtualMachine::executeBytecodeInstruction(uint8_t instruction_bytecode, uint8_t operand0, uint8_t operand1)

@@ -11,7 +11,6 @@
 #include "typedefs.hpp"
 #include "CPUState.hpp"
 
-#include "VirtualMachineState.hpp"
 
 
 

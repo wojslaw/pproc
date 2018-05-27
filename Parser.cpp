@@ -9,13 +9,13 @@ Parser::Parser(struct VirtualMachine *input_vmpointer)
 
 
 	symbolmap_byte = std::map<std::string, uint8_t>();
-	symbolmap_bytepair = std::map<std::string, struct BytePair>();
+	symbolmap_multibyte = std::map<std::string, std::vector<uint8_t>>();
 
 	symbolmap_byte["a"] = regcode_a;
 	symbolmap_byte["aa"] = regcode_a;
 	
 	symbolmap_byte["b"] = regcode_b;
-	symbolmap_byte["ba"] = regcode_b;
+	symbolmap_byte["ab"] = regcode_b;
 	
 	symbolmap_byte["p"] = regcode_p;
 	symbolmap_byte["ip"] = regcode_p;
@@ -55,10 +55,90 @@ std::vector<std::vector<std::string>> Parser::parseProgram(std::string source)
 }
 
 
-std::vector<uint8_t> Parser::compileParsedProgram(std::vector<std::vector<std::string>>)
+
+
+
+std::vector<uint8_t> Parser::compileStatement (
+		std::vector<std::string> statement,
+		VirtualMachine *vm_ptr )
 {
+	auto compiled_statement = std::vector<uint8_t> ();
+
+	compiled_statement.push_back( 
+			vm_ptr->getInstructionBytecodeByMnemonic (statement.at(0)) 
+			);
+
+	for (size_t i = 1; i < statement.size(); ++i) {
+		uint8_t value; 
+		
+		try {
+			value = (uint8_t) std::stoi (statement.at(i) , 0, 0);
+		} catch (std::invalid_argument ) {
+			try {
+				std::cout << "Looking at symbol map";
+				value = symbolmap_byte.at(statement.at(i));
+			} catch (std::out_of_range) {
+				std::cerr << "\nWarning: couldn't translate token `" << statement.at(i) << "`";
+				throw;
+			}
+		}
+		compiled_statement.emplace_back(value);
+	}
+	
+
+	return compiled_statement;
+}
+
+
+
+
+
+
+void Parser::executeDirective (std::vector<std::string> statement)
+{
+	std::cout << "\n Directive: " << statement.at(0) << std::endl;
+
+	if ( statement.at(0) == DIRECTIVE_DEFINE_CONST ) {
+		if ( statement.size()  != 3) { 
+			std::cerr << "Error: directive " << DIRECTIVE_DEFINE_CONST << " requires 3 arguments. Received: " << statement.size(); 
+		}
+
+		std::string key = statement.at(1);
+		uint8_t value = (uint8_t) std::stoi (statement.at(2) , 0, 16);
+		symbolmap_byte[key] = value;
+		printf("\n [%s] = 0x%02x" , key.c_str(), symbolmap_byte.at(key) );
+	}
+
+
+	std::cerr << "executeDirective() not done yet";
+}
+
+
+std::vector<uint8_t> Parser::compileParsedProgram(
+		std::vector<std::vector<std::string>> parsed_program, 
+		VirtualMachine *vm_ptr)
+{
+
+
+	std::vector<std::vector<uint8_t>> compiled_statements;
+	
+	for (auto statement : parsed_program) {
+		if ( statement.at(0).at(0) != DIRECTIVE_SIGNIFIER ) {
+			compiled_statements.emplace_back(compileStatement(statement, vm_ptr));
+		} else {
+			executeDirective (statement);
+		}
+	}
+
+	
+
 	std::vector<uint8_t> compiled_program;
-	compiled_program.reserve(0x40);
+	for (std::vector<uint8_t> statement : compiled_statements ) {
+		for (uint8_t byte : statement) {
+			compiled_program.emplace_back(byte);
+		}
+	}
+
 
 
 	return compiled_program;
@@ -98,11 +178,7 @@ std::vector<std::string> Parser::splitTextIntoStatements (std::string text)
 	}
 
 
-	/*int i = 0;
-	for (std::string statement : vector_statements ) {
-		std::cout << "\n" << i << "\t(" << statement << ")";
-		++i;
-	}*/
+
 
 	return vector_statements;
 }
@@ -175,6 +251,7 @@ std::vector<std::string> Parser::splitTextIntoExpressions(std::string text_of_pr
 
 std::vector<std::string> Parser::splitExpressionIntoStatements(std::string expression)
 {
+	printf("\nDeprecated functions was called: %s", __func__);
 	auto vector_of_statements = std::vector<std::string>();
 	auto current_statement = std::string();
 	vector_of_statements.reserve(3);
@@ -209,6 +286,7 @@ std::vector<std::string> Parser::splitExpressionIntoStatements(std::string expre
 
 std::vector<struct InstructionText> Parser::splitProgramIntoTextInstructions(std::string parenthesized_program)
 {
+	printf("\nDeprecated functions was called: %s", __func__);
 	auto text_instructions = std::vector<struct InstructionText>();
 	auto instruction = std::string();
 	auto operand = std::string();
@@ -243,8 +321,19 @@ std::vector<struct InstructionText> Parser::splitProgramIntoTextInstructions(std
 }
 
 
+
+
+
+
+
+
+
+
+
+
 uint8_t Parser::parseStringIntoOperandByte(std::string text_operand, int required_adrestype)
 {
+	printf("\nDeprecated functions was called: %s", __func__);
 	if ( 0 == text_operand.size() ) {
 		return 0;
 	}
@@ -281,6 +370,7 @@ std::vector<uint8_t> Parser::compileTextInstructionIntoBytecode (
 		struct InstructionText instruction_text,
 		VirtualMachine *vm_pointer )
 {
+	printf("\nDeprecated functions was called: %s", __func__);
 	std::vector<uint8_t> compiled_instruction;
 	compiled_instruction.reserve(3);
 	compiled_instruction.resize(3);
@@ -299,6 +389,7 @@ std::vector<std::vector <uint8_t>> Parser::compileVectorOfTextInstructionsIntoBy
 		( std::vector<struct InstructionText> vector_of_text_instructions ,
 		  VirtualMachine *vm_pointer )
 {
+	printf("\nDeprecated functions was called: %s", __func__);
 	std::vector<std::vector<uint8_t>> vector_of_compiled_instructions;
 	vector_of_compiled_instructions.reserve(0x100);
 
@@ -342,6 +433,7 @@ std::vector<struct InstructionParsed> Parser::parseTextInstructions(std::vector<
 
 std::vector<struct InstructionCompiled> Parser::compileParsedProgramToBytecode(std::vector<struct InstructionParsed> parsed_program)
 {
+	printf("\nDeprecated functions was called: %s", __func__);
 	struct Instruction current_instruction;
 	std::vector<struct InstructionCompiled> compiled_program;
 
@@ -362,6 +454,7 @@ std::vector<struct InstructionCompiled> Parser::compileParsedProgramToBytecode(s
 
 void Parser::interpretParenthesisedFile(std::string filename)
 {
+	printf("\nDeprecated functions was called: %s", __func__);
 	std::cout <<  "\n\n Parser::interpretParenthesisedFile doesn't work!";
 	/*
 	FILE *file = fopen(filename.c_str(), "r");

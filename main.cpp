@@ -26,16 +26,16 @@ Flagi
 #include <bitset>
 
 
-#include "InstructionSet.hpp"
+//#include "InstructionSetImplementation.hpp"
+//#include "InstructionSet.hpp"
 #include "Instruction.hpp"
 #include "VirtualMachine.hpp"
-#include "InstructionSetImplementation.hpp"
 #include "Parser.hpp"
 
 #include "typedefs.hpp"
 
 
-void compileAndLoadProgram (
+void OLD_compileAndLoadProgram (
 		struct VirtualMachine *vm ,
 		std::string program ,
 		uint8_t ,
@@ -49,7 +49,7 @@ void compileAndLoadProgram (
 
 
 
-void NEW_compileAndLoadProgram(VirtualMachine *vm, 
+void compileAndLoadProgram(VirtualMachine *vm, 
 		std::string source_code )
 {
 	std::cout << source_code;
@@ -70,6 +70,12 @@ void NEW_compileAndLoadProgram(VirtualMachine *vm,
 		std::cout << ")";
 	}
 
+	std::vector<std::uint8_t> compiled_program = parser.compileParsedProgram(parsed_program, vm);
+	std::cout << "\nsize of compiled program: " << compiled_program.size();
+	for (uint8_t byte : compiled_program) {
+		printf("\n 0x%02x", byte);
+	}
+
 }
 
 
@@ -82,8 +88,8 @@ int main()
 
 	//vm.isa.printInstructionSet();
 
-	NEW_compileAndLoadProgram(&vm, 
-			"(dec-reg ab) (dec-reg ab) (add-val 0x20) (adc-alu) (push-aa)");
+	compileAndLoadProgram(&vm, 
+			"(#defval const1 0x20) (inc-reg const1)");
 
 		
 
@@ -101,7 +107,7 @@ int main()
 
 
 
-void compileAndLoadProgram (
+void OLD_compileAndLoadProgram (
 		VirtualMachine *vm,
 		std::string program,
 		uint8_t startpage ,
