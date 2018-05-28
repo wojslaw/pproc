@@ -89,7 +89,9 @@ void VirtualMachine::createDefaultInstructionSet ()
 {
 	vector_of_wrapped_instructions.reserve(30);
 
-	addWrappedInstruction( "nop", "no-operation", [] (struct CPUState *cpu_state_pointer, uint8_t operand0, uint8_t operand1)
+	addWrappedInstruction( "nop", 0,
+			"no-operation", 
+			[] (struct CPUState *cpu_state_pointer, uint8_t operand0, uint8_t operand1)
 			{
 				return 0;
 			});
@@ -119,12 +121,14 @@ void VirtualMachine::createDefaultInstructionSet ()
 	//
 	//------------------[ arithmetic, logic ]---
 	//
-	addWrappedInstruction( "adc-alu", "add-with-carry-alu", [] (struct CPUState *cpu_state_pointer, uint8_t operand0, uint8_t operand1)
+	addWrappedInstruction( "adc-alu", 0, 
+			"add-with-carry-alu", 
+			[] (struct CPUState *cpu_state_pointer, uint8_t operand0, uint8_t operand1)
 			{
 				int a = cpu_state_pointer->registers_adresable.at(regcode_a);
 				int b = cpu_state_pointer->registers_adresable.at(regcode_a);
 				
-				a = a + b;
+				a += b;
 				if ( a > 0xff ) {
 					cpu_state_pointer->setBitOfRegister(regcode_flags, flagnumber_carry, 1);
 				} else {
@@ -135,33 +139,8 @@ void VirtualMachine::createDefaultInstructionSet ()
 				return 0;
 			} );
 
-	addWrappedInstruction( "sbc-alu", "subtract-with-carry-alu", [] (struct CPUState *cpu_state_pointer, uint8_t operand0, uint8_t operand1)
-			{
-				cpu_state_pointer->registers_adresable.at(regcode_a) = 
-					cpu_state_pointer->registers_adresable.at(regcode_a)  
-					-
-					cpu_state_pointer->registers_adresable.at(regcode_a)  ;
-				return 0;
-			});
-
-	addWrappedInstruction( "add-alu", "add-alu", [] (struct CPUState *cpu_state_pointer, uint8_t operand0, uint8_t operand1)
-			{
-				cpu_state_pointer->registers_adresable.at(regcode_a) = 
-					cpu_state_pointer->registers_adresable.at(regcode_a)  
-					+
-					cpu_state_pointer->registers_adresable.at(regcode_a)  ;
-				return 0;
-			});
-
-	addWrappedInstruction( "add-val", "add-alu", [] (struct CPUState *cpu_state_pointer, uint8_t operand0, uint8_t operand1)
-			{
-				cpu_state_pointer->registers_adresable.at(regcode_a) = 
-					cpu_state_pointer->registers_adresable.at(regcode_a)  
-					+
-					operand0;
-				return 0;
-			});
-	addWrappedInstruction( "sub-alu", "subtract-alu", [] (struct CPUState *cpu_state_pointer, uint8_t operand0, uint8_t operand1)
+	addWrappedInstruction( "sbc-alu", 0, 
+			"subtract-with-carry-alu", [] (struct CPUState *cpu_state_pointer, uint8_t operand0, uint8_t operand1)
 			{
 				cpu_state_pointer->registers_adresable.at(regcode_a) = 
 					cpu_state_pointer->registers_adresable.at(regcode_a)  
@@ -221,7 +200,7 @@ void VirtualMachine::createDefaultInstructionSet ()
 			//
 			//  
 			//
-	addWrappedInstruction( "seta-val", 0, 
+	addWrappedInstruction( "seta-val", 1, 
 			"set-a-to-value", [] (struct CPUState *cpu_state_pointer, uint8_t operand0, uint8_t operand1)
 			{
 				cpu_state_pointer->registers_adresable.at(regcode_a) = 

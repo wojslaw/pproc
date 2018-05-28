@@ -70,7 +70,11 @@ struct CPUState {
 
 
 	void incrementRegister(uint8_t register_bytecode);
+	void incrementRegister(uint8_t register_bytecode, uint8_t value);
 	void decrementRegister(uint8_t register_bytecode);
+	void decrementRegister(uint8_t register_bytecode, uint8_t value);
+
+
 	void incrementPairOfRegisters(
 		uint8_t register_bytecode_primary ,
 		uint8_t register_bytecode_secondary );

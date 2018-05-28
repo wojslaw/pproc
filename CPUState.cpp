@@ -38,9 +38,18 @@ void CPUState::incrementRegister(uint8_t register_bytecode)
 {
 	++(registers_adresable.at(register_bytecode));
 }
+void CPUState::incrementRegister(uint8_t register_bytecode, uint8_t value)
+{
+	registers_adresable.at(register_bytecode) += value;
+}
+
 void CPUState::decrementRegister(uint8_t register_bytecode)
 {
 	--(registers_adresable.at(register_bytecode));
+}
+void CPUState::decrementRegister(uint8_t register_bytecode, uint8_t value)
+{
+	registers_adresable.at(register_bytecode) += value;
 }
 
 void CPUState::incrementPairOfRegisters(
