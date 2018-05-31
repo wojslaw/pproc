@@ -29,25 +29,6 @@ const std::string DIRECTIVE_DEFINE_CONST = "#defval";
 
 
 
-struct InstructionText {
-	std::string instruction;
-	std::string operand;
-
-	InstructionText(std::string input_instruction, std::string input_operand) {
-			instruction = input_instruction;
-			operand = input_operand;
-		};
-};
-
-
-struct InstructionParsed {
-	struct Instruction instruction;
-	uint8_t operand;
-
-	InstructionParsed(struct Instruction input_instruction, uint8_t input_operand) { instruction = input_instruction; operand = input_operand; };
-};
-
-
 struct InstructionCompiled {
 	uint8_t instruction;
 	uint8_t operand;
@@ -147,9 +128,7 @@ struct Parser {
 	std::vector<struct InstructionCompiled> compileParsedProgramToBytecode(std::vector<struct InstructionParsed>);
 
 
-	//void interpretFile (std::string);
-	//void parseString(std::string);
-	//void parseFile( /* Need some file stream or something :O*/ );
+
 
 	void interpretParenthesisedFile(std::string filename);
 };

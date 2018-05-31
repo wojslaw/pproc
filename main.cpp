@@ -107,7 +107,7 @@ int main()
 
 
 
-void OLD_compileAndLoadProgram (
+/*void OLD_compileAndLoadProgram (
 		VirtualMachine *vm,
 		std::string program,
 		uint8_t startpage ,
@@ -164,6 +164,6 @@ void OLD_compileAndLoadProgram (
 	vm->cpu_state.printMemory(0x01, 0x00, 0x05);
 	vm->cpu_state.printAdresableRegisters();
 	vm->cpu_state.printFetchedInstruction();
-}
+}*/
 
 

@@ -3,6 +3,9 @@
 #include <cstdint>
 #include <cstdio>
 
+#include <cstdint>
+
+#include <functional>
 #include <map>
 using std::map;
 #include <string>
@@ -12,8 +15,7 @@ using std::cout;
 #include <bitset>
 using std::bitset;
 
-
-#include "Instruction.hpp"
+#include "CPUState.hpp"
 
 
 
@@ -63,7 +65,6 @@ public:
 	
 	std::vector<struct WrappedInstruction> vector_of_wrapped_instructions;
 	
-	std::vector<std::function<int (struct CPUState *, uint8_t, uint8_t)>> vector_of_bare_instructions;
 	void addBareInstruction ( std::function<int (struct CPUState *, uint8_t, uint8_t)> bare_instruction);
 	void addWrappedInstruction (
 			std::string input_mnemonic ,
@@ -81,13 +82,6 @@ public:
 	uint8_t findInstructionByMnemonic(std::string mnemonic);
 
 	uint8_t getInstructionBytecodeByMnemonic(std::string mnemonic);
-	std::vector<CPU_WrappedInstruction> vector_of_instructions;
-	void addInstruction (
-			cpu_instruction_pointer input_instruction_pointer ,
-			int input_adrestype ,
-			std::string input_mnemonic ,
-			std::string input_fullname
-		);
 	
 	
 
@@ -98,11 +92,6 @@ public:
 
 
 
-
-//	struct VirtualMachineState state;
-//	struct InstructionSet isa;
-
-//	Instruction findInstructionByMnemonic(std::string);
 	void evaluateLoadedOperation(void);
 	void incrementPC(void);
 	
@@ -113,7 +102,6 @@ public:
 	VirtualMachine();
 	~VirtualMachine();
 
-	VirtualMachineState* getPointerToState(void);
 
 
 	void printRegisters(void);
