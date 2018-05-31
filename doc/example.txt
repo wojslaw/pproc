@@ -1,0 +1,4 @@
+[nop]
+[inc-reg ac]
+[inc-reg ac]
+[push-ac]

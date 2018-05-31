@@ -1,0 +1,8 @@
+komendy - jakie będą. I/O z symulatorem
+instrukcja obsługi:
+	+informacje o procesorze
+
+
+obiekt sterowania - wyświetlacz
+
+wykonanie - ciągłe i krokowe

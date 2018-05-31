@@ -1,0 +1,31 @@
+Na za 2 tygodnie
+		Obiekt sterowania,
+		Symbole - etykiety, opisy adresów, zmienne symboliczne
+
+zmienne symboliczne?
+Symulator:
+	Skrzyżowanie(sygnalizatory)
+
+(#define stala1 0x22)
+(#define adres1 0x2108)
+
+
+0700(xxx)
+0702(xxx)
+0704(xxx)
+adres: 0706 (xxx)
+
+(#var zmienna) // zmienna = $1008
+(lda page(zmienna))
+(tat x)
+(lda zmienna.cell)
+(tat y)
+(ldv)
+
+0008(lda adres_page) // (lda 00)
+(tat x)
+(lda adres_cell) // (lda 06)
+(tat y)
+(jmp) // (pc := xy) (xy = 0006)
+
+(jmp adres)

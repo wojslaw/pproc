@@ -1,0 +1,10 @@
+Komendy:
+	1. (load-file "<nazwa>") Wczytaj plik
+	2. (load-program-from-file) Wgraj wczytany program(kompilacja, zapis do pamięci)
+
+	Po załadowaniu programu:
+	1. (exec) ciągłe wykonywanie programu
+	2. (step)/s Wykonaj kolejną instrukcję
+
+Wyświetlanie pamięci:
+	

@@ -1,0 +1,4 @@
+(dec-reg ba)
+(dec-reg ba)
+(adc-alu)
+(push-aa aa)
