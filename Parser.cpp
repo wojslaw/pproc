@@ -73,16 +73,24 @@ std::vector<uint8_t> Parser::compileStatement (
 		
 		try {
 			value = (uint8_t) std::stoi (statement.at(i) , 0, 0);
+			compiled_statement.emplace_back(value);
 		} catch (std::invalid_argument ) {
 			try {
-				std::cout << "Looking at symbol map";
-				value = symbolmap_byte.at(statement.at(i));
+				std::vector<uint8_t> value_vector = symbolmap_multibyte.at(statement.at(i));
+				for (uint8_t byte : value_vector) {
+					compiled_statement.emplace_back(byte);
+				}
 			} catch (std::out_of_range) {
-				std::cerr << "\nWarning: couldn't translate token `" << statement.at(i) << "`";
-				throw;
+				try {
+					std::cout << "Looking at symbol map";
+					value = symbolmap_byte.at(statement.at(i));
+					compiled_statement.emplace_back(value);
+				} catch (std::out_of_range) {
+					std::cerr << "\nWarning: couldn't translate token `" << statement.at(i) << "`";
+					throw;
+				}
 			}
 		}
-		compiled_statement.emplace_back(value);
 	}
 	
 
@@ -94,50 +102,85 @@ std::vector<uint8_t> Parser::compileStatement (
 
 
 
-void Parser::executeDirective (std::vector<std::string> statement)
+void Parser::executeDirective (std::vector<std::string> statement, uint8_t startpage, uint8_t startcell, unsigned size_bytevector)
 {
-	std::cout << "\n Directive: " << statement.at(0) << std::endl;
+	std::cout << "\n directive: `" << statement.at(0) << "` , size: " << statement.size() << std::endl;
+	
 
+	// define constant
 	if ( statement.at(0) == DIRECTIVE_DEFINE_CONST ) {
 		if ( statement.size()  != 3) { 
-			std::cerr << "Error: directive " << DIRECTIVE_DEFINE_CONST << " requires 3 arguments. Received: " << statement.size(); 
+			std::cerr << "\nError: directive " << DIRECTIVE_DEFINE_CONST << " requires 2 arguments. Received: " << statement.size() - 1; 
+			throw std::invalid_argument ("mismatched arity of directive");
 		}
 
 		std::string key = statement.at(1);
 		uint8_t value = (uint8_t) std::stoi (statement.at(2) , 0, 16);
 		symbolmap_byte[key] = value;
 		printf("\n [%s] = 0x%02x" , key.c_str(), symbolmap_byte.at(key) );
+		return;
+	}
+
+	// define adres
+	if ( statement.at(0) == DIRECTIVE_DEFINE_ADRES ) {
+		if ( statement.size()  != 2) { 
+			std::cerr << "\nError: directive " << DIRECTIVE_DEFINE_ADRES << " requires 1 argument. Received: " << statement.size() - 1;
+			throw std::invalid_argument ("mismatched arity of directive");
+		}
+		
+
+		// TODO: this
+		std::string key = statement.at(1);
+		
+		int adres_number = (startpage * 0x100) + startcell + size_bytevector;
+		int divisor   = adres_number / 0x100;
+		int remainder = adres_number % 0x100;
+		uint8_t page = (uint8_t) divisor;
+		uint8_t cell = (uint8_t) remainder;
+		printf ("Created adres `%s` 0x%02x%02x", key.c_str(), page, cell);
+
+
+		std::vector<uint8_t> adres;
+		adres.reserve(2);
+		adres.resize(2);
+		adres.at(0) = page;
+		adres.at(1) = cell;
+
+		symbolmap_multibyte[key] = adres;
+		return;
 	}
 
 
-	std::cerr << "executeDirective() not done yet";
+
+	fprintf(stderr, "unrecognized directive `%s`", statement.at(0).c_str());
+	throw std::invalid_argument ("unrecognized directive");
 }
 
 
 std::vector<uint8_t> Parser::compileParsedProgram(
-		std::vector<std::vector<std::string>> parsed_program, 
-		VirtualMachine *vm_ptr)
+		std::vector<std::vector<std::string>> parsed_program ,
+		VirtualMachine *vm_ptr ,
+		uint8_t startpage ,
+		uint8_t startcell )
 {
-
-
-	std::vector<std::vector<uint8_t>> compiled_statements;
+	std::vector<uint8_t> compiled_program = std::vector<uint8_t>();
+	//std::vector<std::vector<uint8_t>> compiled_statements = std::vector<std::vector<uint8_t>>();
 	
-	for (auto statement : parsed_program) {
-		if ( statement.at(0).at(0) != DIRECTIVE_SIGNIFIER ) {
-			compiled_statements.emplace_back(compileStatement(statement, vm_ptr));
+	for (auto parsed_statement : parsed_program) {
+		auto compiled_statement = std::vector<uint8_t>();
+		if ( parsed_statement.at(0).at(0) != DIRECTIVE_SIGNIFIER ) {
+			compiled_statement = compileStatement(parsed_statement, vm_ptr);
 		} else {
-			executeDirective (statement);
+			executeDirective (parsed_statement,  startpage, startcell , compiled_program.size() );
 		}
-	}
 
-	
-
-	std::vector<uint8_t> compiled_program;
-	for (std::vector<uint8_t> statement : compiled_statements ) {
-		for (uint8_t byte : statement) {
+		for (uint8_t byte : compiled_statement) {
 			compiled_program.emplace_back(byte);
 		}
 	}
+
+	
+
 
 
 

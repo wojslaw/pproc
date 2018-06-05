@@ -8,6 +8,7 @@
 #include <vector>
 
 #include <fstream>
+#include <stdexcept>
 
 #include "typedefs.hpp"
 
@@ -15,14 +16,17 @@
 
 
 
-const char DELIMITER_BEGIN = '(';
-const char DELIMITER_END = ')';
-const char SEPARATOR = ' ';
-const char DIRECTIVE_SIGNIFIER = '#';
+static const char DELIMITER_BEGIN = '(';
+static const char DELIMITER_END = ')';
+static const char SEPARATOR = ' ';
+static const char DIRECTIVE_SIGNIFIER = '#';
 
-const std::string SEPARATORS = " \n\t";
+static const std::string SEPARATORS = " \n\t";
 
-const std::string DIRECTIVE_DEFINE_CONST = "#defval";
+static const std::string DIRECTIVE_DEFINE_CONST = "#value";
+static const std::string DIRECTIVE_DEFINE_ADRES = "#adres";
+
+
 
 
 
@@ -43,9 +47,6 @@ struct InstructionCompiled {
 	};
 };
 
-struct BytePair {
-	uint8_t byte[2];
-};
 
 struct Parser {
 	VirtualMachine *vm;
@@ -59,17 +60,17 @@ struct Parser {
 	
 
 
-	std::vector<uint8_t>  
-		compileParsedProgram(
-			std::vector<std::vector<std::string>> ,
-			VirtualMachine *vm_ptr );
+	std::vector<uint8_t> compileParsedProgram(
+			std::vector<std::vector<std::string>> parsed_program ,
+			VirtualMachine *vm_ptr ,
+			uint8_t startpage ,
+			uint8_t startcell );
+
+
 
 	std::vector<std::vector<std::string>> 
 		parseProgram(
 			std::string source );
-
-
-
 	
 	std::vector<std::string> 
 		splitTextIntoStatements (
@@ -90,7 +91,7 @@ struct Parser {
 			 );
 
 	void executeDirective 
-			(std::vector<std::string>);
+			(std::vector<std::string>, uint8_t, uint8_t, unsigned);
 
 
 

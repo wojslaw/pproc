@@ -5,4 +5,4 @@ clear &&
 	clear &&
 	echo "---[STARTING]---" &&
 	clear &&
-	./przejproc
+	./przejproc program.txt

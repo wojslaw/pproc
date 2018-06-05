@@ -24,18 +24,19 @@ using std::bitset;
 
 struct WrappedInstruction {
 	uint8_t bytecode;
-	std::function<int (struct CPUState *, uint8_t, uint8_t)> instruction;
+	std::function<int (struct CPUState *)> instruction;
 	std::string fullname;
 	std::string mnemonic;
 	uint8_t argcount;
 
 	WrappedInstruction(
 			uint8_t input_bytecode ,
-			std::function<int (struct CPUState *, uint8_t, uint8_t)> input_instruction ,
+			std::function<int (struct CPUState *)> input_instruction ,
 			std::string input_mnemonic ,
 			std::string input_fullname
 			) 
 	{
+		argcount = 0;
 		bytecode    =  input_bytecode ;
 		instruction =  input_instruction ;
 		mnemonic    =  input_mnemonic ;
@@ -46,7 +47,7 @@ struct WrappedInstruction {
 			uint8_t input_bytecode ,
 			std::string input_mnemonic ,
 			std::string input_fullname ,
-			std::function<int (struct CPUState *, uint8_t, uint8_t)> input_instruction ,
+			std::function<int (struct CPUState *)> input_instruction ,
 			uint8_t input_argcount
 			) 
 	{
@@ -65,28 +66,31 @@ public:
 	
 	std::vector<struct WrappedInstruction> vector_of_wrapped_instructions;
 	
-	void addBareInstruction ( std::function<int (struct CPUState *, uint8_t, uint8_t)> bare_instruction);
+	//void addBareInstruction ( std::function<int (struct CPUState *)> bare_instruction);
 	void addWrappedInstruction (
 			std::string input_mnemonic ,
 			std::string input_fullname ,
-			std::function<int (struct CPUState *, uint8_t , uint8_t)> input_instruction );
+			std::function<int (struct CPUState *)> input_instruction );
 
 	void addWrappedInstruction (
 			std::string input_mnemonic , uint8_t input_argcount ,
 			std::string input_fullname ,
-			std::function<int (struct CPUState *, uint8_t , uint8_t)> input_instruction 
+			std::function<int (struct CPUState *)> input_instruction 
 			);
 
+	int loopUntilEndOfMemory ();
+	int loopUntilInstruction ( uint8_t bytecode);
 
 	struct WrappedInstruction getInstructionByMnemonic(std::string);
 	uint8_t findInstructionByMnemonic(std::string mnemonic);
 
-	uint8_t getInstructionBytecodeByMnemonic(std::string mnemonic);
+	uint8_t getInstructionBytecodeByMnemonic (std::string mnemonic);
+	WrappedInstruction getInstructionByBytecode (uint8_t);
 	
 	
 
 	void createDefaultInstructionSet();
-	void executeBytecodeInstruction(uint8_t instruction_bytecode, uint8_t operand0, uint8_t operand1);
+	std::string executeBytecodeInstruction(uint8_t instruction_bytecode);
 
 	void printInstructionSet();
 
@@ -127,7 +131,7 @@ public:
 
 	void loadInstructionAtPC(void);
 	void executeCurrentlyLoadedInstruction(void);
-	void doMachineCycle(void);
+	std::string doMachineCycle(void);
 };
 
 

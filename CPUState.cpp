@@ -2,6 +2,11 @@
 
 CPUState::CPUState()
 {
+	registers_instruction.reserve(3);
+	registers_instruction.resize(3);
+
+	array_of_adresable_registers_descriptions.reserve(8);
+	array_of_adresable_registers_descriptions.resize(8);
 	setRegisterDescription(0x00, "aa", "acumulator", "Accumulates and does arithmetic and logic and stuff!!!");
 	setRegisterDescription(0x01, "ba", "b-acumulator", "Secondary accumulator, used in some ALU functions");
 	setRegisterDescription(0x02, "ip", "instruction-page", "Memory page from which the instruction is being read");
@@ -81,21 +86,24 @@ std::string CPUState::getRegisterSymbolByBytecode(uint8_t register_bytecode)
 }
 
 
-void CPUState::printFetchedInstruction()
+void CPUState::printFetchedInstruction(const char * text)
 {
-	printf("( 0x%02x", registers_instruction.at(0));
+	printf("instr 0x%02x%02x: ( 0x%02x"
+			, registers_adresable.at(regcode_p)
+			, registers_adresable.at(regcode_c)
+			, registers_instruction.at(0));
 	for (int i = 1; i < registers_instruction.size(); ++i ) {
 		printf( " 0x%02x ", registers_instruction.at(i) );
 	}
 
-	printf(")");
+	printf("), %s", text);
 }
 
 
 void CPUState::printAdresableRegisters()
 {
 	putchar('\n');
-	for(int i = 0; i < registers_adresable.size(); ++i) {
+	for(int i = 0; i < array_of_adresable_registers_descriptions.size(); ++i) {
 		printf("  '%s'(0x%02x) = 0x%02x   :   ", 
 				array_of_adresable_registers_descriptions.at(i).symbol.c_str(), 
 				i ,
@@ -147,6 +155,23 @@ bool CPUState::getBitOfRegister(uint8_t register_code, uint8_t bit_number)
 }
 
 
+void CPUState::incrementProgramCounter (uint8_t value)
+{
+	registers_adresable.at(regcode_c) += value;
+	if ( registers_adresable.at(regcode_c) == 0 ) {
+		++(registers_adresable.at(regcode_p));
+	}
+}
+
+void CPUState::setRegisterValue (uint8_t regcode, uint8_t value)
+{
+	registers_adresable.at(regcode) = value;
+}
+
+uint8_t CPUState::getRegisterValue (uint8_t regcode)
+{
+	return registers_adresable.at(regcode);
+}
 
 
 
@@ -181,6 +206,11 @@ void CPUState::printMemory(
 	}
 }
 
+[[deprecated]]void CPUState::printStack ()
+{
+	
+}
+
 
 void CPUState::loadVectorOfBytesToMemory(
 		uint8_t page , 
@@ -204,14 +234,19 @@ void CPUState::loadCurrentInstructionToPosition(uint8_t pos)
 			+ registers_adresable[regcode_c] ];
 }
 
-void CPUState::fetchTwoByteInstruction(void)
-{
-	loadCurrentInstructionToPosition(0);
-	incrementPairOfRegisters(regcode_c, regcode_p);
-	loadCurrentInstructionToPosition(1);
-	incrementPairOfRegisters(regcode_c, regcode_p);
-}
 
+
+uint8_t CPUState::fetchInstructionAtProgramCounter(void)
+{
+	uint8_t instr = getMemoryValueAt( 
+				registers_adresable.at(regcode_programcounter_page) , 
+				registers_adresable.at(regcode_programcounter_cell) );
+	
+	registers_instruction.emplace_back( instr);
+	incrementProgramCounter(1);
+	printf ("\nfetched 0x%02x, now instruction vector size = %ld", instr, registers_instruction.size());
+	return instr;
+}
 	
 
 uint8_t CPUState::getMemoryValueAt(uint8_t page, uint8_t cell)
@@ -224,6 +259,13 @@ void CPUState::setMemoryValueAt(uint8_t page, uint8_t cell, uint8_t value)
 	memory.at(0x100*page + cell) = value;
 }
 
+
+uint8_t CPUState::getMemoryValueAtProgramCounter(void)
+{
+	return getMemoryValueAt( 
+			registers_adresable.at(regcode_programcounter_page) ,
+			registers_adresable.at(regcode_programcounter_cell) );
+}
 
 void CPUState::loadSequenceOfBytesIntoMemory(
 		std::vector<uint8_t> vector_of_bytes
