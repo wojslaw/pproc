@@ -8,7 +8,7 @@ CPUState::CPUState()
 	array_of_adresable_registers_descriptions.reserve(8);
 	array_of_adresable_registers_descriptions.resize(8);
 	setRegisterDescription(0x00, "aa", "acumulator", "Accumulates and does arithmetic and logic and stuff!!!");
-	setRegisterDescription(0x01, "ba", "b-acumulator", "Secondary accumulator, used in some ALU functions");
+	setRegisterDescription(0x01, "ab", "b-acumulator", "Secondary accumulator, used in some ALU functions");
 	setRegisterDescription(0x02, "ip", "instruction-page", "Memory page from which the instruction is being read");
 	setRegisterDescription(0x03, "ic", "instruction-page", "Memory page from which the instruction is being read");
 	setRegisterDescription(0x04, "sp", "stack-pointer", "Pointer to the top of processor's stack");
@@ -77,6 +77,18 @@ uint8_t CPUState::getRegisterBytecodeBySymbol(std::string register_symbol)
 	
 	throw std::domain_error("Couldn't return registerbytecode, because the given symbol doesn't correspond to any existent register.");
 	return -1;
+}
+
+
+uint8_t CPUState::stackPop()
+{
+	--(registers_adresable.at(regcode_stackpointer));
+	return memory.at(0x100 + registers_adresable.at(regcode_stackpointer));
+}
+void CPUState::stackPush(uint8_t value)
+{
+	memory.at(0x100 + registers_adresable.at(regcode_stackpointer)) = value;
+	++(registers_adresable.at(regcode_stackpointer));
 }
 
 

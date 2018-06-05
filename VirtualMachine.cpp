@@ -127,7 +127,7 @@ void VirtualMachine::createDefaultInstructionSet ()
 			[] (struct CPUState *cpu_state_pointer)
 			{
 				uint8_t oper0 = cpu_state_pointer->fetchInstructionAtProgramCounter ();
-				++(cpu_state_pointer->registers_adresable.at(oper0));
+				--(cpu_state_pointer->registers_adresable.at(oper0));
 				return 1;
 			});
 	
@@ -217,15 +217,25 @@ void VirtualMachine::createDefaultInstructionSet ()
 			//
 			//  
 			//
-	addWrappedInstruction( "seta-val", 1,
-			"set-a-to-value", [] (struct CPUState *cpu_state_pointer)
-			{
-				uint8_t operand0 = cpu_state_pointer->fetchInstructionAtProgramCounter();
-				cpu_state_pointer->registers_adresable.at(regcode_a) = 
-					operand0 ;
-				printf ("\nseta-val, argument: 0x%02x", operand0);
-				return 1;
-			});
+			addWrappedInstruction( "seta-val", 1,
+					"set-a-to-value", [] (struct CPUState *cpu_state_pointer)
+					{
+						uint8_t operand0 = cpu_state_pointer->fetchInstructionAtProgramCounter();
+						cpu_state_pointer->registers_adresable.at(regcode_a) = 
+							operand0 ;
+						return 1;
+					});
+			addWrappedInstruction( "set-pointer", 2,
+					"set-pointer-to-value(2 bytes)", [] (struct CPUState *cpu_state_pointer)
+					{
+						uint8_t index_page = cpu_state_pointer->fetchInstructionAtProgramCounter();
+						uint8_t index_cell = cpu_state_pointer->fetchInstructionAtProgramCounter();
+						cpu_state_pointer->registers_adresable.at(regcode_index_page) = 
+							index_page ;
+						cpu_state_pointer->registers_adresable.at(regcode_index_cell) = 
+							index_cell;
+						return 1;
+					});
 
 
 
@@ -233,19 +243,32 @@ void VirtualMachine::createDefaultInstructionSet ()
 			//
 			//------------[ jumps ]
 			//
-			addWrappedInstruction( "jump-adres", 2, 
-					"jump_to_adres_unconditional", [] (struct CPUState *cpu_state_pointer)
+			addWrappedInstruction( "jump", 2, 
+					"jump-to-adres-unconditional", [] (struct CPUState *cpu_state_pointer)
 			{
 				uint8_t page = cpu_state_pointer->fetchInstructionAtProgramCounter();
 				uint8_t cell = cpu_state_pointer->fetchInstructionAtProgramCounter();
-				
+
 				cpu_state_pointer->registers_adresable.at(regcode_p) 
 					 = page;
 				cpu_state_pointer->registers_adresable.at(regcode_c) 
 					= cell;
 				return 2;
 			});
-
+			addWrappedInstruction( "jump-if-zero", 2, 
+					"jump-to-adres-if-zero", [] (struct CPUState *cpu_state_pointer)
+			{
+				uint8_t page = cpu_state_pointer->fetchInstructionAtProgramCounter();
+				uint8_t cell = cpu_state_pointer->fetchInstructionAtProgramCounter();
+				uint8_t accumulator = cpu_state_pointer->registers_adresable.at(regcode_accumulator);
+				if ( 0 == accumulator) {
+					cpu_state_pointer->registers_adresable.at(regcode_programcounter_page) 
+						 = page;
+					cpu_state_pointer->registers_adresable.at(regcode_programcounter_cell) 
+						= cell;
+			}
+				return 2;
+			});
 
 			//
 			//-----------------[ stack ]---
@@ -254,21 +277,69 @@ void VirtualMachine::createDefaultInstructionSet ()
 					"push-acumulator", 
 					[] (struct CPUState *cpu_state_pointer)
 			{
-				cpu_state_pointer->setMemoryValueAt (0x01, cpu_state_pointer->getRegisterValue(regcode_stackpointer), cpu_state_pointer->getRegisterValue
-						(regcode_accumulator));
-				cpu_state_pointer->memory.at (0x100 + cpu_state_pointer->registers_adresable.at(regcode_s)) 
-					= cpu_state_pointer->registers_adresable.at(regcode_a);
-				cpu_state_pointer->incrementRegister(regcode_s);
+				cpu_state_pointer->stackPush(cpu_state_pointer->getRegisterValue(regcode_accumulator));
 				return 0;
 			});
 			addWrappedInstruction( "pop-aa", 0, 
 					"pop-to-acumulator", 
 					[] (struct CPUState *cpu_state_pointer)
 			{
-				cpu_state_pointer->decrementRegister(regcode_s);
-				cpu_state_pointer->memory.at (0x100 + cpu_state_pointer->registers_adresable.at(regcode_s)) 
-					= cpu_state_pointer->registers_adresable.at(regcode_a);
+				cpu_state_pointer->setRegisterValue(
+						regcode_accumulator, 
+						cpu_state_pointer->stackPop());
 				return 0;
+			});
+				// Call and return - stack-based jumps
+			addWrappedInstruction( "call", 2, 
+					"call-procedure", [] (struct CPUState *cpu_state_pointer)
+			{
+				uint8_t page = cpu_state_pointer->fetchInstructionAtProgramCounter();
+				uint8_t cell = cpu_state_pointer->fetchInstructionAtProgramCounter();
+				
+				cpu_state_pointer->stackPush(cpu_state_pointer->getRegisterValue(regcode_programcounter_page));
+				cpu_state_pointer->stackPush(cpu_state_pointer->getRegisterValue(regcode_programcounter_cell));
+
+				cpu_state_pointer->registers_adresable.at(regcode_p)
+					 = page;
+				cpu_state_pointer->registers_adresable.at(regcode_c)
+					= cell;
+				return 2;
+			});
+			addWrappedInstruction( "return", 2, 
+					"return-from-procedure", [] (struct CPUState *cpu_state_pointer)
+			{
+				uint8_t cell = cpu_state_pointer->stackPop();
+				uint8_t page = cpu_state_pointer->stackPop();
+				
+				cpu_state_pointer->registers_adresable.at(regcode_p)
+					 = page;
+				cpu_state_pointer->registers_adresable.at(regcode_c)
+					= cell;
+				return 2;
+			});
+
+			//
+			//============[ memory ]=======
+			//
+			addWrappedInstruction( "save-aa", 2, 
+					"save-accumulator-to-memory", [] (struct CPUState *cpu_state_pointer)
+			{
+				uint8_t page = cpu_state_pointer->fetchInstructionAtProgramCounter();
+				uint8_t cell = cpu_state_pointer->fetchInstructionAtProgramCounter();
+
+				cpu_state_pointer->setMemoryValueAt (
+						page, cell, 
+						cpu_state_pointer->registers_adresable.at (regcode_a) );
+				return 2;
+			});
+			addWrappedInstruction( "load-aa", 2, 
+					"load-accumulator-from-memory", [] (struct CPUState *cpu_state_pointer)
+			{
+				uint8_t page = cpu_state_pointer->fetchInstructionAtProgramCounter();
+				uint8_t cell = cpu_state_pointer->fetchInstructionAtProgramCounter();
+				cpu_state_pointer->registers_adresable.at (regcode_a) 
+						= cpu_state_pointer->getMemoryValueAt (page, cell);
+				return 2;
 			});
 }
 

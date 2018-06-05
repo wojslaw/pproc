@@ -55,18 +55,21 @@ void compileAndLoadProgram(VirtualMachine *vm,
 		std::cout << ")";
 	}
 
-	std::vector<std::uint8_t> compiled_program = parser.compileParsedProgram (parsed_program, vm, startpage, startcell);
-	std::cout << "\nsize of compiled program: " << compiled_program.size();
-	for (uint8_t byte : compiled_program) {
+	CompiledProgram compiled_program = parser.compileParsedProgram (parsed_program, vm, startpage, startcell);
+
+	std::vector<uint8_t> bytecode_program = compiled_program.bytecode_program;
+	std::cout << "\nsize of compiled program: " << bytecode_program.size();
+	for (uint8_t byte : bytecode_program) {
 		printf("\n 0x%02x", byte);
 	}
 
+	printf("\n Program start at: 0x%02x%02x", compiled_program.start_adres.at(0) , compiled_program.start_adres.at(1));
 	vm->cpu_state.loadVectorOfBytesToMemory(
 			startpage , 
 			startcell ,
-			compiled_program );
-	vm->cpu_state.setRegisterValue(regcode_p, startpage);
-	vm->cpu_state.setRegisterValue(regcode_c, startcell);
+			bytecode_program );
+	vm->cpu_state.setRegisterValue(regcode_p, compiled_program.start_adres.at(0) );
+	vm->cpu_state.setRegisterValue(regcode_c, compiled_program.start_adres.at(1) );
 }
 
 
@@ -144,10 +147,11 @@ int main(int argc, char **argv)
 			printHelp();
 		} else if ( strcmp ( argv[1], "-isa") == 0 ) {
 			printIsa(&vm);
+		} else if ( strcmp ( argv[1], "" ) ) {
 		} else {
 			loaded_text = loadFile (argv[1]);
 			text_was_loaded = true;
-		}
+		} 
 	}
 	if (!text_was_loaded) {
 		return 0;

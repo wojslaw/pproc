@@ -21,12 +21,18 @@ static const char DELIMITER_END = ')';
 static const char SEPARATOR = ' ';
 static const char DIRECTIVE_SIGNIFIER = '#';
 
-static const std::string SEPARATORS = " \n\t";
+//static const std::string SEPARATORS = " \n\t";
+
 
 static const std::string DIRECTIVE_DEFINE_CONST = "#value";
 static const std::string DIRECTIVE_DEFINE_ADRES = "#adres";
+static const std::string DIRECTIVE_START = "#start";
 
 
+struct CompiledProgram {
+	std::vector<uint8_t> start_adres;
+	std::vector<uint8_t> bytecode_program;
+};
 
 
 
@@ -60,7 +66,7 @@ struct Parser {
 	
 
 
-	std::vector<uint8_t> compileParsedProgram(
+	CompiledProgram compileParsedProgram(
 			std::vector<std::vector<std::string>> parsed_program ,
 			VirtualMachine *vm_ptr ,
 			uint8_t startpage ,

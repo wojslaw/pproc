@@ -106,6 +106,28 @@ void Parser::executeDirective (std::vector<std::string> statement, uint8_t start
 {
 	std::cout << "\n directive: `" << statement.at(0) << "` , size: " << statement.size() << std::endl;
 	
+	if ( statement.at(0) == DIRECTIVE_START ) {
+		if ( statement.size()  != 1) { 
+			std::cerr << "\nError: directive " << DIRECTIVE_START << " takes no arguments. Received: " << statement.size() - 1;
+			throw std::invalid_argument ("mismatched arity of directive");
+		}
+		int adres_number = (startpage * 0x100) + startcell + size_bytevector;
+		int divisor   = adres_number / 0x100;
+		int remainder = adres_number % 0x100;
+		uint8_t page = (uint8_t) divisor;
+		uint8_t cell = (uint8_t) remainder;
+		printf ("Program begins at 0x%02x%02x", page, cell);
+
+
+		std::vector<uint8_t> adres;
+		adres.reserve(2);
+		adres.resize(2);
+		adres.at(0) = page;
+		adres.at(1) = cell;
+
+		symbolmap_multibyte["#start"] = adres;
+		return;
+	}
 
 	// define constant
 	if ( statement.at(0) == DIRECTIVE_DEFINE_CONST ) {
@@ -157,7 +179,9 @@ void Parser::executeDirective (std::vector<std::string> statement, uint8_t start
 }
 
 
-std::vector<uint8_t> Parser::compileParsedProgram(
+
+
+CompiledProgram Parser::compileParsedProgram(
 		std::vector<std::vector<std::string>> parsed_program ,
 		VirtualMachine *vm_ptr ,
 		uint8_t startpage ,
@@ -179,12 +203,27 @@ std::vector<uint8_t> Parser::compileParsedProgram(
 		}
 	}
 
+
+	std::vector<uint8_t> start_adres;
+	start_adres.reserve(2);
+	start_adres.resize(2);
+	try {
+		start_adres = symbolmap_multibyte.at(DIRECTIVE_START);
+	} catch (std::out_of_range) {
+		std::cerr << "Warning: failed to find adres of #start.";
+		start_adres.at(0) = startpage;
+		start_adres.at(1) = startcell;
+	}
+
+
+	CompiledProgram structure_compiled_program;
+
+	structure_compiled_program.start_adres = start_adres;
+	structure_compiled_program.bytecode_program = compiled_program;
+
 	
 
-
-
-
-	return compiled_program;
+	return structure_compiled_program;
 }
 
 

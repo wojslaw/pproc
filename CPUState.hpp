@@ -17,16 +17,18 @@ static const size_t NUMBER_OF_REGISTERS_ADRESABLE= 0x100;
 static const uint8_t regcode_a = 0x00;
 static const uint8_t regcode_accumulator = 0x00;
 static const uint8_t regcode_b = 0x01;
-static const uint8_t regcode_p = 0x02;
-static const uint8_t regcode_programcounter_page = 0x02;
-static const uint8_t regcode_c = 0x03;
-static const uint8_t regcode_programcounter_cell = 0x03;
 static const uint8_t regcode_s = 0x04;
 static const uint8_t regcode_stackpointer = 0x04;
 static const uint8_t regcode_f = 0x05;
 static const uint8_t regcode_flags = 0x05;
 static const uint8_t regcode_x = 0x06;
+static const uint8_t regcode_index_page = 0x06;
 static const uint8_t regcode_y = 0x07;
+static const uint8_t regcode_index_cell = 0x06;
+static const uint8_t regcode_p = 0x02;
+static const uint8_t regcode_programcounter_page = 0x02;
+static const uint8_t regcode_c = 0x03;
+static const uint8_t regcode_programcounter_cell = 0x03;
 
 static const uint8_t flagnumber_carry = 0x00;
 
@@ -70,6 +72,8 @@ struct CPUState {
 		, uint8_t startpage 
 		, uint8_t startcell);
 
+	uint8_t stackPop();
+	void    stackPush(uint8_t value);
 
 	void setMemoryValueAt (uint8_t page, uint8_t cell, uint8_t value);
 	uint8_t getMemoryValueAt (uint8_t page, uint8_t cell);
